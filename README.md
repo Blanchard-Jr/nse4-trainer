@@ -63,6 +63,22 @@ Ajoute tes captures dans docs/screenshots/ puis supprime les marques de commenta
 
 ---
 
+## Exam Blueprint
+
+Cette plateforme est construite autour du blueprint officiel de la certification **Fortinet NSE 4 – FortiOS 7.6 Administrator**.
+
+| Domaine                               | Pondération |
+|---------------------------------------|-------------|
+| Deployment and system configuration   | 20–25%      |
+| Firewall policies and authentication | 20–25%      |
+| Content inspection                    | 25–30%      |
+| Routing                                | 10–15%      |
+| VPNs                                   | 10–15%      |
+
+Le détail complet est disponible dans le fichier [docs/XAM-BLUEPRINT.md](docs/EXAM-BLUEPRINT.md).
+
+---
+
 ## Démarrage rapide
 
 1. Télécharge ou clone le dépôt.
