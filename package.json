@@ -1,0 +1,15 @@
+{
+  "name": "nse4-trainer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Simulateur d'examen et coach de révision pour Fortinet NSE 4 (FortiOS 7.6 Administrator / FCP)",
+  "author": "Blanchard (@Blanchard-Jr)",
+  "license": "MIT",
+  "scripts": {
+    "build": "python tools/build.py",
+    "check": "python tools/build.py --check",
+    "test": "node tests/run-all.js"
+  },
+  "engines": { "node": ">=20" },
+  "devDependencies": { "jsdom": "^30.1.3" }
+}

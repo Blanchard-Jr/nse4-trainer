@@ -1,0 +1,3119 @@
+<!DOCTYPE html>
+<html lang="fr">
+<!--
+  NSE4-FGT Trainer  v__APP_VERSION__
+  Simulateur d'examen et coach de révision : Fortinet NSE 4 / FCP FortiOS 7.6 Administrator
+
+  Copyright (c) 2026 Blanchard (@Blanchard-Jr)
+  Conçu et dirigé par Blanchard ; développé avec l'assistance de Claude (IA d'Anthropic).
+  Code sous licence MIT (voir le fichier LICENSE). Les banques de questions ne sont pas couvertes par cette licence.
+  Projet indépendant, non affilié à Fortinet ni à Pearson VUE.
+-->
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>NSE4-FGT Trainer — Fortinet NSE 4 FortiOS 7.6</title>
+<meta name="description" content="Entraîneur d'examen personnel pour la certification Fortinet NSE 4 - FortiOS 7.6 Administrator (FCP)">
+<meta name="author" content="Blanchard (@Blanchard-Jr), développé avec Claude (Anthropic)">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<script>
+/* Apparence (thème + couleur d'accent) : appliquée avant le premier affichage */
+var THEME_DEFAULT_ACCENT = {light:'#2563EB', dark:'#FF5A2B'};
+function _hexRgb(h){ var n=parseInt(h.slice(1),16); return [(n>>16)&255,(n>>8)&255,n&255]; }
+function _mix(h,t,k){ var a=_hexRgb(h), b=_hexRgb(t); return '#'+a.map(function(v,i){ return ('0'+Math.round(v+(b[i]-v)*k).toString(16)).slice(-2); }).join(''); }
+function applyAppearance(settings){
+  var root=document.documentElement;
+  var theme=(settings && settings.theme==='dark') ? 'dark' : 'light';
+  root.setAttribute('data-theme', theme);
+  var props=['--accent','--accent-rgb','--accent-dim','--accent-hover'];
+  var c=settings && settings.accent;
+  if(!(typeof c==='string' && /^#[0-9a-fA-F]{6}$/.test(c))){ props.forEach(function(p){ root.style.removeProperty(p); }); return; }
+  root.style.setProperty('--accent', c);
+  root.style.setProperty('--accent-rgb', _hexRgb(c).join(','));
+  root.style.setProperty('--accent-dim', theme==='dark' ? _mix(c,'#000000',0.22) : _mix(c,'#ffffff',0.55));
+  root.style.setProperty('--accent-hover', theme==='dark' ? _mix(c,'#ffffff',0.12) : _mix(c,'#000000',0.15));
+}
+(function(){ try{ var raw=localStorage.getItem('nse4fgt_progress_v1'); var s=raw?JSON.parse(raw):null; applyAppearance(s && s.settings); }catch(e){ applyAppearance(null); } })();
+</script>
+<style>
+/* ============================================================
+   NSE4-FGT TRAINER — design tokens
+   ============================================================ */
+:root, [data-theme="dark"]{
+  color-scheme: dark;
+  --bg:#080B12; --bg-grid:rgba(255,255,255,0.025);
+  --panel:#10151F; --panel-alt:#151B28; --panel-raised:#1A2130;
+  --border:#232B3D; --border-soft:#1A2030;
+  --text:#E7ECF5; --text-dim:#8C97AD; --text-faint:#5C6779;
+  --accent:#FF5A2B; --accent-rgb:255,90,43; --accent-dim:#C7431A; --accent-hover:#ff6c40;
+  --accent-glow:rgba(var(--accent-rgb),0.35); --on-accent:#fff;
+  --good:#33D689; --good-dim:#1B8354; --good-bg:rgba(51,214,137,0.10);
+  --bad:#FF4F63; --bad-dim:#B23142; --bad-bg:rgba(255,79,99,0.10);
+  --warn:#FFC24B; --warn-bg:rgba(255,194,75,0.12); --warn-border:#7a5c1a;
+  --link:#5aa9ff; --link-hover:#8cc4ff;
+  --topbar-bg:rgba(8,11,18,0.7); --overlay:rgba(4,6,10,0.9);
+  --cli-bg:#05070c; --cli-fg:#8fe3a3;
+  --glow-a:0.09; --glow-2:rgba(51,150,255,0.06); --tint-blue:rgba(51,150,255,0.08);
+  --shadow:none; --shadow-hover:0 8px 24px rgba(0,0,0,0.3); --shadow-pop:0 10px 30px rgba(0,0,0,0.4);
+  --btn-dark-bg:var(--panel-raised); --btn-dark-fg:var(--text);
+  --radius:14px; --radius-sm:8px; --btn-radius:10px;
+  --font-display:'Space Grotesk','Segoe UI',sans-serif; --font-body:'Inter','Segoe UI',sans-serif;
+  --font-label:'JetBrains Mono','Consolas',monospace; --font-code:'JetBrains Mono','Consolas',monospace;
+}
+/* Thème clair : inspiré du tableau de bord fourni (fond gris-bleu pâle, cartes blanches, bleu royal / bleu nuit) */
+[data-theme="light"]{
+  color-scheme: light;
+  --bg:#F8FAFC; --bg-grid:transparent;
+  --panel:#FFFFFF; --panel-alt:#F8FAFC; --panel-raised:#F1F5F9;
+  --border:#E2E8F0; --border-soft:#EDF1F6;
+  --text:#0F172A; --text-dim:#475569; --text-faint:#64748B;
+  --accent:#2563EB; --accent-rgb:37,99,235; --accent-dim:#9DB9F5; --accent-hover:#1D4ED8;
+  --good:#15803D; --good-dim:#A3DDB9; --good-bg:#ECFDF5;
+  --bad:#DC2626; --bad-dim:#F3B7B9; --bad-bg:#FEF2F2;
+  --warn:#B45309; --warn-bg:#FFFBEB; --warn-border:#F1D49A;
+  --link:#2563EB; --link-hover:#1D4ED8;
+  --topbar-bg:rgba(255,255,255,0.88); --overlay:rgba(15,23,42,0.62);
+  --cli-bg:#0F172A; --cli-fg:#86EFAC;
+  --glow-a:0.05; --glow-2:transparent; --tint-blue:rgba(37,99,235,0.06);
+  --shadow:0 10px 30px rgba(15,23,42,0.06), 0 1px 2px rgba(15,23,42,0.04);
+  --shadow-hover:0 14px 34px rgba(15,23,42,0.10); --shadow-pop:0 12px 30px rgba(15,23,42,0.18);
+  --btn-dark-bg:#0F172A; --btn-dark-fg:#fff;
+  --radius:24px; --radius-sm:14px; --btn-radius:999px;
+  --font-display:'Plus Jakarta Sans','Segoe UI',sans-serif; --font-body:'Plus Jakarta Sans','Segoe UI',sans-serif;
+  --font-label:'Plus Jakarta Sans','Segoe UI',sans-serif;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:
+    radial-gradient(ellipse 900px 500px at 15% -10%, rgba(var(--accent-rgb),var(--glow-a)), transparent 60%),
+    radial-gradient(ellipse 700px 500px at 100% 0%, var(--glow-2), transparent 55%),
+    var(--bg);
+  color:var(--text);
+  font-family:var(--font-body);
+  min-height:100vh;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:"";
+  position:fixed; inset:0;
+  background-image:
+    linear-gradient(var(--bg-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--bg-grid) 1px, transparent 1px);
+  background-size: 42px 42px;
+  pointer-events:none;
+  z-index:0;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 20%, transparent 75%);
+}
+a{color:inherit;}
+button{font-family:inherit;}
+h1,h2,h3,.font-display{font-family:var(--font-display); letter-spacing:-0.01em;}
+.mono{font-family:var(--font-label);}
+::selection{background:var(--accent); color:#fff;}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:10px; height:10px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border); border-radius:10px;}
+::-webkit-scrollbar-thumb:hover{background:var(--text-faint);}
+
+/* ============================================================
+   TOP BAR
+   ============================================================ */
+.topbar{
+  position:relative; z-index:2;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:16px 28px;
+  border-bottom:1px solid var(--border-soft);
+  background:var(--topbar-bg);
+  backdrop-filter:blur(10px);
+  position:sticky; top:0;
+  overflow:hidden;
+}
+.topbar::after{
+  content:"";
+  position:absolute; left:-30%; top:0; bottom:0; width:30%;
+  background:linear-gradient(90deg, transparent, rgba(var(--accent-rgb),0.35), transparent);
+  animation: scanline 7s linear infinite;
+  pointer-events:none;
+}
+@keyframes scanline{
+  0%{left:-30%;}
+  60%{left:130%;}
+  100%{left:130%;}
+}
+.brand{display:flex; align-items:center; gap:12px; cursor:pointer; user-select:none;}
+.brand-mark{
+  width:34px; height:34px; position:relative; flex-shrink:0;
+}
+.brand-mark svg{width:100%; height:100%; display:block;}
+.brand-text{display:flex; flex-direction:column; line-height:1.15;}
+.brand-title{font-family:var(--font-display); font-weight:700; font-size:16.5px; letter-spacing:0.01em;}
+.brand-title span{color:var(--accent);}
+.brand-sub{font-family:var(--font-label); font-size:10.5px; color:var(--text-faint); letter-spacing:0.06em; text-transform:uppercase;}
+
+.topbar-right{display:flex; align-items:center; gap:10px;}
+.icon-btn{
+  display:flex; align-items:center; justify-content:center;
+  width:36px;height:36px;border-radius:10px;
+  background:var(--panel-alt); border:1px solid var(--border);
+  color:var(--text-dim); cursor:pointer; transition:all .15s ease;
+}
+.icon-btn:hover{color:var(--text); border-color:var(--text-faint); background:var(--panel-raised);}
+.icon-btn svg{width:17px;height:17px;}
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.app{position:relative; z-index:1; max-width:1080px; margin:0 auto; padding:0 20px 80px;}
+.view{display:none;}
+.view.active{display:block;}
+
+/* ============================================================
+   HOME VIEW
+   ============================================================ */
+.hero{padding:52px 4px 30px;}
+.hero-eyebrow{
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:var(--font-label); font-size:11px; letter-spacing:0.12em; text-transform:uppercase;
+  color:var(--accent); border:1px solid var(--accent-dim); background:rgba(var(--accent-rgb),0.08);
+  padding:5px 11px; border-radius:100px; margin-bottom:18px;
+}
+.hero-eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--accent); box-shadow:0 0 8px var(--accent-glow); animation:pulse 1.8s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.35;}}
+.hero h1{font-size:clamp(30px,5vw,44px); margin:0 0 12px; font-weight:700; max-width:720px;}
+.hero p{color:var(--text-dim); max-width:560px; font-size:15.5px; margin:0;}
+
+.stat-row{display:flex; gap:14px; margin-top:30px; flex-wrap:wrap;}
+.stat-chip{
+  background:var(--panel); border:1px solid var(--border); border-radius:var(--radius-sm);
+  padding:12px 18px; min-width:120px;
+}
+.stat-chip .num{font-family:var(--font-display); font-size:22px; font-weight:700;}
+.stat-chip .lbl{font-size:11.5px; color:var(--text-faint); text-transform:uppercase; letter-spacing:0.05em; margin-top:2px;}
+.stat-chip .num.good{color:var(--good);}
+.stat-chip .num.bad{color:var(--bad);}
+.stat-chip .num.accent{color:var(--accent);}
+
+/* Mode tabs */
+.mode-tabs{display:flex; gap:6px; margin:38px 0 22px; border-bottom:1px solid var(--border-soft); padding-bottom:0;}
+.mode-tab{
+  font-family:var(--font-display); font-weight:600; font-size:14.5px;
+  padding:10px 18px; color:var(--text-dim); cursor:pointer; border-bottom:2px solid transparent;
+  transition:all .15s ease; display:flex; align-items:center; gap:8px;
+}
+.mode-tab svg{width:16px;height:16px; opacity:0.7;}
+.mode-tab:hover{color:var(--text);}
+.mode-tab.active{color:var(--text); border-bottom-color:var(--accent);}
+.mode-tab.active svg{opacity:1;}
+
+.mode-panel{display:none;}
+.mode-panel.active{display:block; animation:fadeUp .25s ease;}
+@keyframes fadeUp{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+/* Cards grid (exams / themes) */
+.card-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(230px,1fr)); gap:14px; margin-top:6px;}
+.pick-card{
+  background:var(--panel); border:1px solid var(--border); border-radius:var(--radius);
+  padding:18px; cursor:pointer; transition:all .18s ease; position:relative; overflow:hidden;
+}
+.pick-card:hover{border-color:var(--accent-dim); transform:translateY(-2px); box-shadow:var(--shadow-hover);}
+.pick-card.selected{border-color:var(--accent); background:linear-gradient(160deg, rgba(var(--accent-rgb),0.09), var(--panel) 60%);}
+.pick-card.selected::after{
+  content:"✓"; position:absolute; top:12px; right:12px; width:20px;height:20px;border-radius:50%;
+  background:var(--accent); color:#fff; font-size:12px; display:flex; align-items:center; justify-content:center; font-weight:700;
+}
+.pick-card h4{margin:0 0 6px; font-family:var(--font-display); font-size:15.5px;}
+.pick-card p{margin:0; font-size:12.5px; color:var(--text-faint); line-height:1.45;}
+.pick-card .meta{display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;}
+.tag{
+  font-family:var(--font-label); font-size:10px; text-transform:uppercase; letter-spacing:0.04em;
+  padding:3px 8px; border-radius:5px; background:var(--panel-raised); color:var(--text-dim); border:1px solid var(--border);
+}
+.tag.prog-high{color:var(--good); border-color:var(--good-dim);}
+.tag.prog-low{color:var(--bad); border-color:var(--bad-dim);}
+.tag.prog-mid{color:var(--warn); border-color:var(--warn-border);}
+
+/* Options row (count / mode toggles) */
+.opt-block{margin-top:26px;}
+.opt-label{font-family:var(--font-label); font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:var(--text-faint); margin-bottom:10px; display:block;}
+.chip-row{display:flex; gap:8px; flex-wrap:wrap;}
+.chip-btn{
+  padding:9px 16px; border-radius:100px; border:1px solid var(--border); background:var(--panel-alt);
+  color:var(--text-dim); font-size:13px; cursor:pointer; transition:all .15s ease; font-weight:500;
+}
+.chip-btn:hover{border-color:var(--text-faint); color:var(--text);}
+.chip-btn.active{background:var(--accent); border-color:var(--accent); color:#fff;}
+
+/* Session type selector */
+.stype-row{display:flex; gap:10px; flex-wrap:wrap;}
+.stype-card{
+  flex:1; min-width:230px; padding:16px 18px; border-radius:var(--radius); border:1px solid var(--border);
+  background:var(--panel); cursor:pointer; transition:all .15s ease;
+}
+.stype-card:hover{border-color:var(--text-faint);}
+.stype-card.active{border-color:var(--accent); background:linear-gradient(160deg, rgba(var(--accent-rgb),0.09), var(--panel) 60%);}
+.stype-card h4{margin:0 0 5px; font-family:var(--font-display); font-size:14.5px; display:flex; align-items:center; gap:8px;}
+.stype-card p{margin:0; font-size:12px; color:var(--text-faint); line-height:1.5;}
+.stype-badge{font-family:var(--font-label); font-size:9.5px; text-transform:uppercase; padding:2px 7px; border-radius:5px; background:var(--panel-raised); color:var(--text-faint);}
+
+/* Quick sim CTA */
+.quicksim-cta{
+  margin-top:24px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+  padding:20px 24px; border-radius:var(--radius); border:1px solid var(--accent-dim);
+  background:linear-gradient(120deg, rgba(var(--accent-rgb),0.12), rgba(var(--accent-rgb),0.02));
+}
+.quicksim-cta .qtitle{font-family:var(--font-display); font-weight:700; font-size:15.5px; display:flex; align-items:center; gap:8px;}
+.quicksim-cta .qdesc{font-size:12.5px; color:var(--text-dim); margin-top:4px;}
+
+/* Domain mastery */
+.domain-mastery{margin-top:18px;}
+.dm-row{display:flex; align-items:center; gap:14px; padding:11px 0; border-bottom:1px solid var(--border-soft);}
+.dm-info{width:230px; flex-shrink:0;}
+.dm-name{font-size:13px; font-weight:600;}
+.dm-weight{font-family:var(--font-label); font-size:10px; color:var(--text-faint);}
+.dm-bar-wrap{flex:1; height:9px; background:var(--border); border-radius:5px; overflow:hidden;}
+.dm-bar{height:100%; border-radius:5px; transition:width .6s ease;}
+.dm-pct{width:50px; text-align:right; font-family:var(--font-label); font-size:12.5px; flex-shrink:0;}
+
+/* Strength / weakness badges */
+.badge-row{display:flex; gap:8px; flex-wrap:wrap; margin-top:14px;}
+.sw-badge{
+  font-size:12.5px; padding:6px 13px; border-radius:100px; font-weight:500; display:flex; align-items:center; gap:6px;
+}
+.sw-badge.strength{background:var(--good-bg); color:var(--good); border:1px solid var(--good-dim);}
+.sw-badge.weakness{background:var(--bad-bg); color:var(--bad); border:1px solid var(--bad-dim);}
+
+/* Recommendations */
+.reco-box{
+  margin-top:22px; padding:18px 20px; border-radius:var(--radius); border:1px solid var(--border);
+  background:var(--panel);
+}
+.reco-box h4{margin:0 0 12px; font-family:var(--font-display); font-size:14px; display:flex; align-items:center; gap:8px;}
+.reco-list{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:9px;}
+.reco-list li{display:flex; gap:10px; font-size:13.3px; color:var(--text-dim); align-items:flex-start;}
+.reco-num{
+  flex-shrink:0; width:20px; height:20px; border-radius:6px; background:var(--panel-raised); color:var(--accent);
+  font-family:var(--font-label); font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; margin-top:1px;
+}
+
+/* Progression history sparkline */
+.history-row{display:flex; gap:8px; align-items:flex-end; height:70px; margin-top:14px; padding:0 2px;}
+.history-bar-wrap{flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; height:100%; justify-content:flex-end;}
+.history-bar{width:100%; max-width:34px; border-radius:5px 5px 2px 2px; background:var(--accent); min-height:4px;}
+.history-lbl{font-family:var(--font-label); font-size:9px; color:var(--text-faint); white-space:nowrap;}
+
+/* Coach domain panel */
+.coach-panel{
+  background:var(--panel); border:1px solid var(--border); border-radius:var(--radius);
+  padding:26px 28px; margin-bottom:20px; animation:fadeUp .2s ease;
+}
+.coach-panel-head{display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:8px;}
+.coach-panel-title{font-family:var(--font-display); font-size:20px; font-weight:700; display:flex; align-items:center; gap:10px;}
+.coach-panel-weight{font-family:var(--font-label); font-size:11px; color:var(--text-faint);}
+.coach-star{font-size:11px; font-family:var(--font-label); color:var(--accent); border:1px solid var(--accent-dim); background:rgba(var(--accent-rgb),0.08); padding:3px 9px; border-radius:100px;}
+.coach-mastery-block{margin:18px 0 22px; padding:16px 18px; background:var(--panel-alt); border:1px solid var(--border); border-radius:10px;}
+.coach-mastery-label{font-family:var(--font-label); font-size:11px; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-faint); margin-bottom:9px; display:flex; justify-content:space-between;}
+.coach-section{margin-top:24px;}
+.coach-section h4{font-family:var(--font-display); font-size:13.5px; color:var(--text); margin:0 0 12px; display:flex; align-items:center; gap:8px;}
+.coach-section h4 .n{color:var(--accent);}
+.concept-grid{columns:2; column-gap:26px;}
+@media (max-width:640px){ .concept-grid{columns:1;} }
+.concept-item{
+  break-inside:avoid; font-size:13px; color:var(--text-dim); padding:7px 0 7px 16px; position:relative; line-height:1.45;
+  border-bottom:1px solid var(--border-soft);
+}
+.concept-item::before{content:"•"; position:absolute; left:0; color:var(--accent);}
+.cli-box{
+  background:var(--cli-bg); border:1px solid var(--border); border-radius:10px; padding:16px 18px;
+  font-family:var(--font-code); font-size:12.8px; color:var(--cli-fg); line-height:2;
+}
+.cli-box .cli-line::before{content:"$ "; color:var(--text-faint);}
+.assoc-questions{display:flex; flex-wrap:wrap; gap:7px; margin-bottom:16px;}
+.q-chip{
+  font-family:var(--font-label); font-size:11.5px; padding:5px 11px; border-radius:7px; cursor:pointer;
+  background:var(--panel-alt); border:1px solid var(--border); color:var(--text-dim); transition:all .12s ease;
+}
+.q-chip:hover{border-color:var(--accent-dim); color:var(--text);}
+.q-chip.q-wrong{border-color:var(--bad-dim); color:var(--bad);}
+.q-chip.q-good{border-color:var(--good-dim); color:var(--good);}
+.coach-actions{display:flex; gap:10px; margin-top:20px; flex-wrap:wrap;}
+
+/* Method modal */
+.method-modal{
+  position:fixed; inset:0; background:var(--overlay); z-index:150; display:none;
+  align-items:center; justify-content:center; padding:24px; backdrop-filter:blur(4px);
+}
+.method-modal.active{display:flex;}
+.method-panel{
+  background:var(--panel); border:1px solid var(--border); border-radius:var(--radius);
+  max-width:640px; width:100%; max-height:85vh; overflow-y:auto; padding:26px 28px;
+}
+.method-panel h3{margin:0 0 6px; font-size:19px; display:flex; align-items:center; gap:9px;}
+.method-panel .msub{color:var(--text-faint); font-size:12.5px; margin-bottom:20px;}
+.method-section{margin-bottom:22px;}
+.method-section h4{font-family:var(--font-display); font-size:13px; color:var(--accent); text-transform:uppercase; letter-spacing:0.04em; margin:0 0 10px;}
+.method-chips{display:flex; flex-wrap:wrap; gap:7px;}
+.method-chip{font-family:var(--font-label); font-size:11.5px; padding:5px 11px; border-radius:7px; background:var(--panel-alt); border:1px solid var(--border); color:var(--text-dim);}
+.trap-list{display:flex; flex-direction:column; gap:10px;}
+.trap-item{padding:11px 13px; border-radius:9px; background:var(--panel-alt); border:1px solid var(--border); border-left:3px solid var(--warn);}
+.trap-item .tcode{font-family:var(--font-label); font-size:12px; color:var(--warn); font-weight:700; margin-bottom:3px;}
+.trap-item .tdesc{font-size:12.5px; color:var(--text-dim); line-height:1.5;}
+.method-principles{display:flex; flex-direction:column; gap:8px;}
+.method-principles li{font-size:13px; color:var(--text-dim); line-height:1.5; padding-left:18px; position:relative;}
+.method-principles li::before{content:"→"; position:absolute; left:0; color:var(--accent);}
+.method-close-btn{position:sticky; top:0; float:right; margin-top:-6px;}
+
+.start-bar{
+  margin-top:34px; display:flex; align-items:center; justify-content:space-between; gap:16px;
+  padding:18px 22px; background:var(--panel); border:1px solid var(--border); border-radius:var(--radius);
+  flex-wrap:wrap;
+}
+.start-bar .summary{font-size:13.5px; color:var(--text-dim);}
+.start-bar .summary b{color:var(--text); font-family:var(--font-display);}
+.btn{
+  font-family:var(--font-display); font-weight:600; font-size:14.5px;
+  padding:12px 26px; border-radius:var(--btn-radius); border:none; cursor:pointer; transition:all .15s ease;
+  display:inline-flex; align-items:center; gap:8px;
+}
+.btn-primary{background:var(--accent); color:#fff; box-shadow:0 4px 20px rgba(var(--accent-rgb),0.25);}
+.btn-primary:hover{background:var(--accent-hover); transform:translateY(-1px);}
+.btn-primary:disabled{background:var(--panel-raised); color:var(--text-faint); cursor:not-allowed; box-shadow:none; transform:none;}
+.btn-ghost{background:transparent; border:1px solid var(--border); color:var(--text-dim);}
+.btn-ghost:hover{border-color:var(--text-faint); color:var(--text);}
+.btn-sm{padding:8px 16px; font-size:13px;}
+
+/* ============================================================
+   QUIZ VIEW
+   ============================================================ */
+.quiz-header{
+  display:flex; align-items:center; justify-content:space-between; gap:16px; padding:22px 0 16px; flex-wrap:wrap;
+}
+.progress-wrap{flex:1; min-width:220px;}
+.progress-meta{display:flex; justify-content:space-between; font-size:12px; color:var(--text-faint); margin-bottom:7px; font-family:var(--font-label);}
+.progress-track{display:flex; gap:3px; height:6px;}
+.progress-seg{flex:1; background:var(--border); border-radius:3px; transition:background .2s ease;}
+.progress-seg.done{background:var(--text-faint);}
+.progress-seg.correct{background:var(--good);}
+.progress-seg.wrong{background:var(--bad);}
+.progress-seg.current{background:var(--accent); box-shadow:0 0 8px var(--accent-glow);}
+
+.quiz-actions{display:flex; gap:8px;}
+.timer-block{
+  display:flex; flex-direction:column; align-items:center; gap:2px;
+  padding:8px 16px; border-radius:10px; background:var(--panel); border:1px solid var(--border);
+  min-width:90px;
+}
+.timer-lbl{font-family:var(--font-label); font-size:9.5px; text-transform:uppercase; letter-spacing:0.05em; color:var(--text-faint);}
+.timer-val{font-family:var(--font-label); font-size:17px; font-weight:700; color:var(--text);}
+.timer-val.time-critical{color:var(--bad); animation:pulse 1s ease-in-out infinite;}
+.domain-time-row{display:flex; gap:8px; flex-wrap:wrap; margin:0 0 14px;}
+.domain-time-chip{
+  font-family:var(--font-label); font-size:10.5px; color:var(--text-faint); background:var(--panel-alt);
+  border:1px solid var(--border); border-radius:100px; padding:4px 10px;
+}
+.domain-time-chip b{color:var(--text-dim); font-weight:600;}
+
+.qcard{
+  background:var(--panel); border:1px solid var(--border); border-radius:var(--radius);
+  padding:28px 28px 24px; margin-bottom:18px; position:relative;
+}
+.qcard-top{display:flex; align-items:flex-start; justify-content:space-between; gap:14px; margin-bottom:16px;}
+.qcard-tags{display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+.qnum{font-family:var(--font-label); font-size:12px; color:var(--accent); font-weight:700;}
+.theme-pill{
+  font-family:var(--font-label); font-size:10.5px; text-transform:uppercase; letter-spacing:0.03em;
+  padding:3px 9px; border-radius:100px; background:var(--panel-raised); color:var(--text-dim); border:1px solid var(--border);
+}
+.flag-btn{
+  display:flex; align-items:center; gap:6px; font-size:12.5px; color:var(--text-faint);
+  background:none; border:none; cursor:pointer; padding:5px 9px; border-radius:7px; transition:all .15s ease;
+}
+.flag-btn:hover{background:var(--panel-raised); color:var(--warn);}
+.flag-btn.flagged{color:var(--warn);}
+.flag-btn svg{width:15px;height:15px;}
+
+.qtext{font-size:16.5px; line-height:1.6; margin-bottom:6px; white-space:pre-line;}
+.qhint{font-size:12.5px; color:var(--text-faint); margin-bottom:16px; font-style:italic;}
+
+.exhibit-block{margin:16px 0 20px;}
+.exhibit-img{
+  width:100%; border-radius:10px; border:1px solid var(--border); background:#fff; display:block;
+  cursor:zoom-in;
+}
+.exhibit-cap{font-family:var(--font-label); font-size:10.5px; color:var(--text-faint); margin-top:6px; text-transform:uppercase; letter-spacing:0.04em;}
+
+.choices{display:flex; flex-direction:column; gap:9px; margin-top:6px;}
+.choice{
+  display:flex; align-items:flex-start; gap:12px; padding:13px 15px; border-radius:10px;
+  border:1px solid var(--border); background:var(--panel-alt); cursor:pointer; transition:all .12s ease;
+}
+.choice:hover{border-color:var(--text-faint);}
+.choice.picked{border-color:var(--accent); background:rgba(var(--accent-rgb),0.08);}
+.choice .mark{
+  flex-shrink:0; width:22px;height:22px; border-radius:6px; border:1.5px solid var(--border);
+  display:flex; align-items:center; justify-content:center; font-family:var(--font-label); font-size:12px;
+  color:var(--text-faint); margin-top:1px; transition:all .12s ease;
+}
+.choice.radio-type .mark{border-radius:50%;}
+.choice.picked .mark{border-color:var(--accent); background:var(--accent); color:#fff;}
+.choice .ctext{font-size:14.5px; line-height:1.5; padding-top:1px;}
+
+/* revealed states */
+.choice.reveal-correct{border-color:var(--good); background:var(--good-bg);}
+.choice.reveal-correct .mark{border-color:var(--good); background:var(--good); color:#04140c;}
+.choice.reveal-wrong{border-color:var(--bad); background:var(--bad-bg);}
+.choice.reveal-wrong .mark{border-color:var(--bad); background:var(--bad); color:#1a0508;}
+.choice.reveal-missed{border-color:var(--good); border-style:dashed;}
+.choice.locked{cursor:default;}
+
+.qfooter{display:flex; align-items:center; justify-content:space-between; margin-top:22px; gap:12px; flex-wrap:wrap;}
+.multi-note{font-size:12px; color:var(--text-faint); font-family:var(--font-label);}
+
+.explain-box{
+  margin-top:18px; padding:16px 18px; border-radius:10px; border:1px solid var(--border);
+  background:var(--panel-raised); animation:fadeUp .25s ease;
+}
+.explain-head{display:flex; align-items:center; gap:9px; margin-bottom:9px; font-family:var(--font-display); font-weight:700; font-size:13.5px;}
+.explain-head.ok{color:var(--good);}
+.explain-head.ko{color:var(--bad);}
+.explain-head svg{width:18px;height:18px;}
+.explain-body{font-size:13.8px; color:var(--text-dim); line-height:1.65; white-space:pre-line;}
+.explain-answer{font-family:var(--font-label); font-size:12px; color:var(--text-faint); margin-top:10px; padding-top:10px; border-top:1px dashed var(--border);}
+
+/* ============================================================
+   RESULTS VIEW
+   ============================================================ */
+.results-hero{text-align:center; padding:40px 20px 20px;}
+.score-ring-wrap{position:relative; width:180px; height:180px; margin:0 auto 20px;}
+.score-ring-wrap svg{transform:rotate(-90deg);}
+.score-ring-bg{fill:none; stroke:var(--border); stroke-width:10;}
+.score-ring-fg{fill:none; stroke:var(--accent); stroke-width:10; stroke-linecap:round; transition:stroke-dashoffset 1s ease;}
+.score-ring-text{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;}
+.score-ring-text .pct{font-family:var(--font-display); font-size:36px; font-weight:700;}
+.score-ring-text .lbl{font-size:11px; color:var(--text-faint); text-transform:uppercase; letter-spacing:0.06em;}
+.results-title{font-size:22px; margin:0 0 6px;}
+.results-sub{color:var(--text-dim); font-size:14px;}
+
+.result-stats{display:flex; justify-content:center; gap:14px; margin:26px 0; flex-wrap:wrap;}
+.theme-breakdown{margin-top:30px;}
+.tb-row{display:flex; align-items:center; gap:14px; padding:10px 0; border-bottom:1px solid var(--border-soft);}
+.tb-name{width:220px; font-size:13px; flex-shrink:0;}
+.tb-bar-wrap{flex:1; height:8px; background:var(--border); border-radius:4px; overflow:hidden;}
+.tb-bar{height:100%; background:var(--accent); border-radius:4px;}
+.tb-pct{width:46px; text-align:right; font-family:var(--font-label); font-size:12px; color:var(--text-dim); flex-shrink:0;}
+
+.result-actions{display:flex; gap:10px; justify-content:center; margin-top:30px; flex-wrap:wrap;}
+
+/* review list */
+.review-list{margin-top:30px; display:flex; flex-direction:column; gap:10px;}
+.review-item{
+  background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:14px 16px;
+  cursor:pointer; transition:all .15s ease;
+}
+.review-item:hover{border-color:var(--text-faint);}
+.review-item .rhead{display:flex; justify-content:space-between; align-items:center; gap:10px;}
+.review-item .rq{font-size:13.5px; flex:1;}
+.ricon{width:20px;height:20px; flex-shrink:0;}
+.ricon.ok{color:var(--good);}
+.ricon.ko{color:var(--bad);}
+
+/* ============================================================
+   MODAL / LIGHTBOX
+   ============================================================ */
+.lightbox{
+  position:fixed; inset:0; background:var(--overlay); z-index:100; display:none;
+  align-items:center; justify-content:center; padding:30px; backdrop-filter:blur(4px);
+}
+.lightbox.active{display:flex;}
+.lightbox img{max-width:100%; max-height:100%; border-radius:8px; box-shadow:0 20px 60px rgba(0,0,0,0.5);}
+.lightbox-close{position:fixed; top:22px; right:26px; color:#fff; cursor:pointer; opacity:0.7;}
+.lightbox-close:hover{opacity:1;}
+.lightbox-close svg{width:26px;height:26px;}
+
+/* Toast */
+.toast{
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+  background:var(--panel-raised); border:1px solid var(--border); color:var(--text);
+  padding:12px 20px; border-radius:10px; font-size:13.5px; z-index:200; opacity:0;
+  transition:all .25s ease; pointer-events:none; box-shadow:var(--shadow-pop);
+}
+.toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+/* Empty state */
+.empty-state{text-align:center; padding:60px 20px; color:var(--text-faint);}
+.empty-state svg{width:44px;height:44px; margin-bottom:14px; opacity:0.5;}
+
+footer.credits{text-align:center; padding:40px 20px 10px; color:var(--text-faint); font-size:11.5px; font-family:var(--font-label);}
+
+@media (max-width:640px){
+  .topbar{padding:14px 16px;}
+  .hero{padding:34px 4px 20px;}
+  .qcard{padding:20px 18px 18px;}
+  .stat-row{gap:10px;}
+  .stat-chip{padding:10px 14px; min-width:0; flex:1;}
+  .tb-name{width:140px; font-size:12px;}
+  .dm-row{flex-wrap:wrap; row-gap:8px;}
+  .dm-info{width:100%;}
+  .dm-bar-wrap{order:2; flex:1 1 auto;}
+  .dm-pct{order:3;}
+  .coach-panel{padding:20px 18px;}
+  .history-row{overflow-x:auto; padding-bottom:2px;}
+  .cli-box{overflow-x:auto;}
+  .cli-box .cli-line{white-space:nowrap;}
+  .progress-wrap{min-width:160px;}
+  .quicksim-cta, .stype-card{padding:16px 16px;}
+}
+@media (max-width:420px){
+  .brand-sub{display:none;}
+  .brand-title{font-size:14px;}
+  .brand-mark{width:28px; height:28px;}
+  .topbar-right{gap:4px;}
+  .icon-btn{width:32px; height:32px;}
+  .icon-btn svg{width:15px; height:15px;}
+  .cli-box{font-size:11.3px;}
+  .method-panel, .coach-panel{padding:18px 15px;}
+}
+
+/* ===== Historique des examens ===== */
+.hist-card{margin-top:34px; background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:24px 24px 22px;}
+.hist-head{display:flex; align-items:center; gap:16px; margin-bottom:22px;}
+.hist-icon{width:52px; height:52px; flex-shrink:0; border-radius:14px; background:var(--panel-raised); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; color:var(--accent);}
+.hist-icon svg{width:24px; height:24px;}
+.hist-title{font-family:var(--font-display); font-weight:700; font-size:20px; line-height:1.1; text-transform:uppercase; letter-spacing:0.01em;}
+.hist-cols, .hist-row{display:grid; grid-template-columns:minmax(0,1fr) 104px 64px 84px; gap:12px; align-items:center;}
+.hist-cols{padding:0 16px 8px; font-family:var(--font-label); font-size:10px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-faint);}
+.hist-cols .r{text-align:right;}
+.hist-row{padding:14px 16px; border-radius:12px; background:var(--panel-alt); border:1px solid var(--border-soft); margin-bottom:8px;}
+.hist-name{font-weight:600; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+.hist-sub{font-family:var(--font-label); font-size:10.5px; color:var(--text-faint); margin-top:3px;}
+.hist-mode-inline{display:none;}
+.hist-mode{font-family:var(--font-label); font-size:10.5px; letter-spacing:0.06em; text-transform:uppercase; color:var(--link);}
+.hist-mode.real{color:var(--accent);}
+.hist-score{text-align:right; font-family:var(--font-display); font-weight:700; font-size:15px;}
+.hist-action{text-align:right;}
+.hist-review-btn{background:none; border:none; cursor:pointer; padding:6px 2px; color:var(--link); font-family:var(--font-display); font-weight:600; font-size:12px; letter-spacing:0.06em; text-transform:uppercase;}
+.hist-review-btn:hover{text-decoration:underline; color:var(--link-hover);}
+.hist-review-off{color:var(--text-faint); font-family:var(--font-label); font-size:12px; cursor:help;}
+.hist-all-btn{width:100%; margin-top:14px; padding:16px; border-radius:var(--btn-radius); border:1px solid var(--border); background:var(--btn-dark-bg); color:var(--btn-dark-fg); font-family:var(--font-display); font-weight:700; font-size:12px; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; transition:all .15s ease;}
+.hist-all-btn:hover{border-color:var(--accent-dim); color:var(--accent);}
+.hist-empty{padding:26px 10px; text-align:center; color:var(--text-faint); font-size:13px; line-height:1.6;}
+@media (max-width:640px){
+  .hist-card{padding:18px 14px;}
+  .hist-cols, .hist-row{grid-template-columns:minmax(0,1fr) 54px 70px; gap:8px;}
+  .hist-cols .mode, .hist-mode{display:none;}
+  .hist-mode-inline{display:inline;}
+  .hist-row{padding:12px 12px;}
+  .hist-title{font-size:17px;}
+}
+/* ===== Écran Statistiques ===== */
+.st-card{margin-top:18px; background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:22px 24px;}
+.st-card-head{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:6px;}
+.st-eyebrow{font-family:var(--font-display); font-weight:700; font-size:15px; margin-bottom:12px; display:flex; align-items:center; gap:8px;}
+.st-card-head .st-eyebrow{margin-bottom:0;}
+.st-count{font-family:var(--font-label); font-size:11px; padding:2px 8px; border-radius:100px; background:var(--panel-raised); border:1px solid var(--border); color:var(--text-dim);}
+.st-muted{color:var(--text-faint); font-size:12.5px; line-height:1.5;}
+.st-disclaimer{color:var(--text-faint); font-size:11.5px; line-height:1.5; margin:14px 0 0;}
+.st-sub{font-family:var(--font-label); font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:var(--text-faint); margin:18px 0 8px;}
+.st-link{background:none; border:none; cursor:pointer; color:var(--link); font-family:var(--font-display); font-weight:600; font-size:12.5px; padding:4px 2px;}
+.st-link:hover{text-decoration:underline;}
+.st-grid-2{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
+.st-grid-2 > .st-card{margin-top:18px;}
+@media (max-width:860px){ .st-grid-2{grid-template-columns:1fr;} }
+
+/* plan */
+.st-plan-top{display:flex; gap:22px; align-items:stretch; flex-wrap:wrap; margin:10px 0 16px;}
+.st-countdown{display:flex; align-items:center; gap:16px; padding:14px 20px; background:var(--panel-alt); border:1px solid var(--border); border-radius:12px;}
+.st-cd-num{font-family:var(--font-display); font-weight:700; font-size:42px; line-height:1; color:var(--accent);}
+.st-cd-sub{font-size:12.5px; color:var(--text-dim); line-height:1.5; text-transform:none;}
+.st-cd-sub b{color:var(--text); text-transform:capitalize;}
+.st-plan-status{flex:1; min-width:220px; padding:14px 16px; border-radius:12px; font-size:13.5px; line-height:1.55; border:1px solid var(--border); background:var(--panel-alt); display:flex; align-items:center;}
+.st-status-ahead, .st-status-ontrack{background:var(--good-bg); border-color:var(--good-dim);}
+.st-status-late{background:var(--warn-bg); border-color:var(--warn-border);}
+.st-status-behind{background:var(--bad-bg); border-color:var(--bad-dim);}
+.st-timeline{margin-bottom:18px;}
+.st-timeline-lbl{display:flex; justify-content:space-between; font-family:var(--font-label); font-size:11px; color:var(--text-faint); margin-bottom:7px; gap:8px; flex-wrap:wrap;}
+.st-today{padding:16px 18px; background:var(--panel-alt); border:1px solid var(--border); border-radius:12px;}
+.st-today-head{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:8px; font-size:14px;}
+.st-today-head .mono{font-size:12px; color:var(--text-dim);}
+.st-tasks{list-style:none; margin:14px 0 4px; padding:0; display:flex; flex-direction:column; gap:9px;}
+.st-tasks li{font-size:13.2px; color:var(--text-dim); line-height:1.5; padding-left:18px; position:relative;}
+.st-tasks li::before{content:"→"; position:absolute; left:0; color:var(--accent);}
+.st-tasks b{color:var(--text);}
+.st-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;}
+.st-chips{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;}
+.st-chip{flex:1; min-width:170px; padding:12px 14px; border:1px solid var(--border); border-radius:10px; background:var(--panel-alt); display:flex; flex-direction:column; gap:3px;}
+.st-chip-n{font-family:var(--font-display); font-weight:700; font-size:18px;}
+.st-chip-l{font-size:11.5px; color:var(--text-faint); line-height:1.4;}
+.st-streak{margin:16px 0 12px; font-size:13px; color:var(--text-dim);}
+.st-streak b{color:var(--warn);}
+.st-dateform{display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:12px 14px; margin:8px 0 10px; border:1px dashed var(--border); border-radius:10px;}
+.st-dateform label{font-size:12.5px; color:var(--text-dim);}
+.st-dateform input{background:var(--panel-alt); color:var(--text); border:1px solid var(--border); border-radius:8px; padding:8px 10px; font-family:var(--font-label); font-size:13px; }
+
+/* calendrier d'activité */
+.st-cal-wrap{width:100%;}
+.st-cal-months{display:grid; gap:4px; font-family:var(--font-label); font-size:10px; color:var(--text-faint); margin-bottom:4px; text-transform:capitalize;}
+.st-cal{display:grid; grid-template-rows:repeat(7,1fr); grid-auto-flow:column; gap:4px;}
+.st-cell{aspect-ratio:1; border-radius:5px; background:var(--panel-raised); border:1px solid var(--border-soft); min-width:0; display:flex; align-items:center; justify-content:center; font-size:11px;}
+.st-cell.lv1{background:rgba(var(--accent-rgb),0.25); border-color:rgba(var(--accent-rgb),0.3);}
+.st-cell.lv2{background:rgba(var(--accent-rgb),0.5); border-color:rgba(var(--accent-rgb),0.55);}
+.st-cell.lv3{background:rgba(var(--accent-rgb),0.75); border-color:rgba(var(--accent-rgb),0.8);}
+.st-cell.lv4{background:var(--accent); border-color:var(--accent);}
+.st-cell.future{opacity:0.45; border-style:dashed;}
+.st-cell.today{outline:2px solid var(--text); outline-offset:1px;}
+.st-cell.exam{opacity:1; border:2px solid var(--accent); background:var(--panel);}
+.st-cal-legend{display:flex; align-items:center; gap:5px; margin-top:8px; font-family:var(--font-label); font-size:10px; color:var(--text-faint);}
+.st-cal-legend .st-cell{width:13px; height:13px; aspect-ratio:auto; display:inline-block;}
+
+/* indice + radar + courbe */
+.st-ring-row{display:flex; align-items:center; gap:22px; flex-wrap:wrap;}
+.st-level{font-family:var(--font-display); font-weight:700; font-size:20px; margin-bottom:8px;}
+.st-formula{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:7px; font-size:12.8px; color:var(--text-dim); line-height:1.5;}
+.st-lever{margin-top:16px; padding:11px 14px; border-radius:10px; background:var(--panel-alt); border:1px solid var(--border); font-size:12.8px; color:var(--text-dim);}
+.st-lever b{color:var(--text);}
+.st-radar{width:100%; max-width:440px; display:block; margin:0 auto;}
+.rd-grid{fill:none; stroke:var(--border); stroke-width:1;}
+.rd-axis{stroke:var(--border-soft); stroke-width:1;}
+.rd-target{fill:none; stroke:var(--good); stroke-width:1.2; stroke-dasharray:4 4; opacity:0.8;}
+.rd-area{fill:rgba(var(--accent-rgb),0.22); stroke:var(--accent); stroke-width:2; stroke-linejoin:round;}
+.rd-dot{fill:var(--accent); stroke:var(--panel); stroke-width:2;}
+.rd-label{fill:var(--text-dim); font-size:12px; font-family:var(--font-body);}
+.rd-pct{font-size:12px; font-weight:700; font-family:var(--font-label);}
+.st-legend{display:flex; justify-content:center; gap:18px; font-size:11.5px; color:var(--text-faint); margin-top:6px; flex-wrap:wrap;}
+.st-legend i{display:inline-block; width:14px; height:3px; border-radius:2px; vertical-align:middle; margin-right:6px;}
+.lg-you{background:var(--accent);} .lg-target{background:var(--good);} .lg-study{background:var(--link);} .lg-real{background:var(--accent);}
+.st-chart{width:100%; height:auto; display:block;}
+.pg-grid{stroke:var(--border-soft); stroke-width:1;}
+.pg-target{stroke:var(--good); stroke-width:1; stroke-dasharray:5 5; opacity:0.7;}
+.pg-axis{fill:var(--text-faint); font-size:11px; font-family:var(--font-label);}
+.pg-line{fill:none; stroke-width:2; stroke-linejoin:round; stroke-linecap:round;}
+.pg-line.pg-study{stroke:var(--link);} .pg-line.pg-real{stroke:var(--accent);}
+.pg-dot{stroke:var(--panel); stroke-width:2;}
+.pg-study-dot{fill:var(--link);} .pg-real-dot{fill:var(--accent);}
+
+/* rythme + têtues */
+.st-pace-top{display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; margin-bottom:6px;}
+.st-pace-n{font-family:var(--font-display); font-weight:700; font-size:34px;}
+.st-pace-bar{position:relative; overflow:visible;}
+.st-pace-bar .dm-bar{border-radius:5px;}
+.st-budget{position:absolute; top:-4px; bottom:-4px; width:2px; background:var(--text-dim); border-radius:1px;}
+.st-q-row{display:flex; align-items:center; gap:10px; padding:9px 0; border-bottom:1px solid var(--border-soft); font-size:12.8px; flex-wrap:wrap;}
+.st-q-row .q-chip{cursor:default; flex-shrink:0;}
+.st-q-txt{flex:1; min-width:160px; color:var(--text-dim); line-height:1.4;}
+.st-q-meta{font-family:var(--font-label); font-size:11px; color:var(--bad);}
+@media (max-width:640px){
+  .st-card{padding:18px 15px;}
+  .st-cd-num{font-size:34px;}
+  .st-countdown{width:100%;}
+  .st-today{padding:14px 13px;}
+  .st-ring-row{justify-content:center;}
+  .home-countdown .lbl{font-size:10px;}
+}
+
+/* ===== Thème clair : finitions ===== */
+[data-theme="light"] .topbar{border-bottom-color:var(--border);}
+[data-theme="light"] .topbar::after{display:none;}
+[data-theme="light"] .stat-chip, [data-theme="light"] .pick-card, [data-theme="light"] .stype-card,
+[data-theme="light"] .qcard, [data-theme="light"] .st-card, [data-theme="light"] .hist-card,
+[data-theme="light"] .coach-panel, [data-theme="light"] .reco-box, [data-theme="light"] .quicksim-cta,
+[data-theme="light"] .start-bar, [data-theme="light"] .timer-block, [data-theme="light"] .method-panel,
+[data-theme="light"] .icon-btn{box-shadow:var(--shadow);}
+[data-theme="light"] .stat-chip{border-radius:20px; padding:18px 20px; border-color:var(--border-soft);}
+[data-theme="light"] .hist-row, [data-theme="light"] .st-chip{border-color:transparent;}
+[data-theme="light"] .btn-ghost{background:#fff;}
+[data-theme="light"] .hist-all-btn:hover{background:var(--accent); border-color:var(--accent); color:#fff;}
+[data-theme="light"] h1, [data-theme="light"] .hist-title, [data-theme="light"] .coach-panel-title,
+[data-theme="light"] .results-title, [data-theme="light"] .brand-title{font-weight:800;}
+[data-theme="light"] .opt-label, [data-theme="light"] .hist-cols, [data-theme="light"] .lbl{font-weight:600; letter-spacing:0.1em;}
+[data-theme="light"] .brand-sub{letter-spacing:0.1em;}
+
+/* tuiles d'icônes des statistiques d'accueil */
+.stat-chip .tile{width:36px; height:36px; border-radius:12px; display:flex; align-items:center; justify-content:center; margin-bottom:14px;}
+.stat-chip .tile svg{width:18px; height:18px;}
+.tile.t-blue{background:rgba(37,99,235,0.14); color:#3B82F6;}
+.tile.t-green{background:rgba(22,163,74,0.14); color:#22C55E;}
+.tile.t-purple{background:rgba(124,58,237,0.14); color:#8B5CF6;}
+.tile.t-amber{background:rgba(245,158,11,0.16); color:#F59E0B;}
+.tile.t-accent{background:rgba(var(--accent-rgb),0.14); color:var(--accent);}
+
+/* écran Apparence */
+.theme-cards{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+.theme-card{background:var(--panel-alt); border:2px solid var(--border); border-radius:var(--radius-sm); padding:10px; cursor:pointer; text-align:left; font-family:inherit; color:var(--text); display:flex; flex-direction:column; gap:8px; transition:all .15s ease;}
+.theme-card:hover{border-color:var(--text-faint);}
+.theme-card.active{border-color:var(--accent); box-shadow:0 0 0 3px rgba(var(--accent-rgb),0.16);}
+.theme-card b{font-family:var(--font-display); font-size:14px;}
+.theme-card span.tcd{font-size:11.5px; color:var(--text-faint); line-height:1.4;}
+.tc-preview{height:88px; border-radius:10px; padding:8px; display:flex; flex-direction:column; gap:6px; border:1px solid rgba(128,128,128,0.25);}
+.tc-bar{height:9px; border-radius:5px;}
+.tc-row{display:flex; gap:6px; flex:1;}
+.tc-card{flex:1; border-radius:7px; padding:6px; display:flex; flex-direction:column; justify-content:space-between;}
+.tc-line{height:5px; border-radius:3px; width:60%;}
+.tc-btn{height:8px; border-radius:6px; width:100%;}
+.swatch-row{display:flex; gap:12px; flex-wrap:wrap; margin-bottom:10px;}
+.swatch{width:34px; height:34px; border-radius:50%; border:3px solid var(--panel); box-shadow:0 0 0 2px var(--border); cursor:pointer; transition:transform .12s ease;}
+.swatch:hover{transform:scale(1.1);}
+.swatch.active{box-shadow:0 0 0 2px var(--text);}
+@media (max-width:420px){ .theme-cards{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+
+<div class="lightbox" id="lightbox">
+  <div class="lightbox-close" id="lightboxClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+  <img id="lightboxImg" src="" alt="Exhibit">
+</div>
+
+<div class="method-modal" id="methodModal">
+  <div class="method-panel">
+    <button class="icon-btn method-close-btn" id="methodCloseBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    <h3>🧭 Méthode d'analyse d'un exhibit</h3>
+    <div class="msub">Comment lire une capture FortiGate comme à l'examen — vite, et sans se faire piéger.</div>
+
+    <div class="method-section">
+      <h4>Éléments à repérer immédiatement</h4>
+      <div class="method-chips" id="methodChecklistChips"></div>
+    </div>
+
+    <div class="method-section">
+      <h4>Pièges classiques à l'examen</h4>
+      <div class="trap-list" id="methodTrapList"></div>
+    </div>
+
+    <div class="method-section">
+      <h4>3 principes à garder en tête</h4>
+      <ul class="method-principles">
+        <li>L'information visible n'est pas toujours utile — une capture contient souvent plus de champs que nécessaire pour répondre.</li>
+        <li>Une seule ligne peut contenir la réponse — apprends à scanner, pas à tout lire linéairement.</li>
+        <li>Un seul détail (un statut, une valeur, un mode) peut invalider les trois autres options — cherche l'exception avant de valider l'évidence.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="method-modal" id="backupModal">
+  <div class="method-panel" style="max-width:480px;">
+    <button class="icon-btn method-close-btn" id="backupCloseBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    <h3>💾 Sauvegarde de la progression</h3>
+    <div class="msub">Tes scores, questions marquées et historique sont stockés uniquement dans ce navigateur. Exporte-les pour ne rien perdre si tu changes d'appareil, de navigateur, ou si tu vides le cache.</div>
+
+    <div class="method-section">
+      <h4>Exporter</h4>
+      <p style="font-size:12.5px; color:var(--text-dim); margin:0 0 12px;">Télécharge un fichier .json contenant toute ta progression actuelle.</p>
+      <button class="btn btn-primary" id="exportBtn" style="width:100%; justify-content:center;">⬇️ Télécharger ma sauvegarde</button>
+    </div>
+
+    <div class="method-section">
+      <h4>Restaurer</h4>
+      <p style="font-size:12.5px; color:var(--text-dim); margin:0 0 12px;">Recharge une sauvegarde précédemment exportée. <b style="color:var(--warn);">Attention :</b> ceci remplace ta progression actuelle.</p>
+      <button class="btn btn-ghost" id="importBtn" style="width:100%; justify-content:center;">⬆️ Choisir un fichier à restaurer</button>
+      <input type="file" id="importFileInput" accept="application/json,.json" style="display:none;">
+    </div>
+
+    <div class="method-section">
+      <h4>Zone sensible</h4>
+      <p style="font-size:12.5px; color:var(--text-dim); margin:0 0 12px;">Efface scores, questions marquées, historique et activité. Ton thème et ta couleur sont conservés. Pense à exporter avant.</p>
+      <button class="btn btn-ghost" id="resetBtn" style="width:100%; justify-content:center; color:var(--bad); border-color:var(--bad-dim);">🗑️ Réinitialiser ma progression</button>
+    </div>
+  </div>
+</div>
+
+<div class="method-modal" id="themeModal">
+  <div class="method-panel" style="max-width:520px;">
+    <button class="icon-btn method-close-btn" id="themeCloseBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    <h3>🎨 Apparence</h3>
+    <div class="msub">Choisis l'ambiance de l'application. Ton choix est enregistré avec ta progression et suit ta sauvegarde.</div>
+
+    <div class="method-section">
+      <h4>Thème</h4>
+      <div class="theme-cards" id="themeCards">
+        <button class="theme-card" data-theme="light">
+          <div class="tc-preview" style="background:#F8FAFC;">
+            <div class="tc-bar" style="background:#fff; border:1px solid #E2E8F0;"></div>
+            <div class="tc-row">
+              <div class="tc-card" style="background:#fff; border:1px solid #E2E8F0;"><div class="tc-line" style="background:#0F172A;"></div><div class="tc-btn" style="background:#2563EB;"></div></div>
+              <div class="tc-card" style="background:#fff; border:1px solid #E2E8F0;"><div class="tc-line" style="background:#16A34A;"></div><div class="tc-btn" style="background:#0F172A;"></div></div>
+            </div>
+          </div>
+          <b>Clair</b><span class="tcd">Tableau de bord bleu et blanc, cartes arrondies. Thème par défaut.</span>
+        </button>
+        <button class="theme-card" data-theme="dark">
+          <div class="tc-preview" style="background:#080B12;">
+            <div class="tc-bar" style="background:#10151F; border:1px solid #232B3D;"></div>
+            <div class="tc-row">
+              <div class="tc-card" style="background:#151B28; border:1px solid #232B3D;"><div class="tc-line" style="background:#E7ECF5;"></div><div class="tc-btn" style="background:#FF5A2B;"></div></div>
+              <div class="tc-card" style="background:#151B28; border:1px solid #232B3D;"><div class="tc-line" style="background:#33D689;"></div><div class="tc-btn" style="background:#232B3D;"></div></div>
+            </div>
+          </div>
+          <b>Sombre</b><span class="tcd">Noir et orange, idéal le soir.</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="method-section">
+      <h4>Couleur d'accent</h4>
+      <div class="swatch-row" id="swatchRow"></div>
+      <button class="st-link" id="accentResetBtn">Revenir à la couleur du thème</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="topbar">
+  <div class="brand" id="brandHome">
+    <div class="brand-mark">
+      <svg viewBox="0 0 40 40" fill="none">
+        <path d="M20 2 L36 9 V21 C36 30 29 36 20 38 C11 36 4 30 4 21 V9 Z" style="fill:var(--panel-raised);stroke:var(--accent)" stroke-width="1.6"/>
+        <path d="M20 9 L29 13 V21 C29 26.5 25 30.5 20 32 C15 30.5 11 26.5 11 21 V13 Z" fill="none" style="stroke:var(--accent)" stroke-width="1.3" opacity="0.55"/>
+        <path d="M14 20.5 L18 24.5 L26.5 15.5" style="stroke:var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="brand-text">
+      <div class="brand-title">NSE4<span>·</span>FGT Trainer</div>
+      <div class="brand-sub">FortiOS 7.6 Administrator</div>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="icon-btn" id="coachNavBtn" title="Coach FCP FortiGate">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10 12 5 2 10l10 5 10-5Z"/><path d="M6 12v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5"/></svg>
+    </div>
+    <div class="icon-btn" id="backupBtn" title="Sauvegarder / restaurer ma progression">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
+    </div>
+    <div class="icon-btn" id="methodBtn" title="Méthode d'analyse d'exhibit">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="m14.5 9.5-2 5.5-5.5 2 2-5.5 5.5-2z"/></svg>
+    </div>
+    <div class="icon-btn" id="statsBtn" title="Statistiques">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-4"/></svg>
+    </div>
+    <div class="icon-btn" id="themeBtn" title="Apparence : thème et couleur">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a9 9 0 1 0 0 18c1.1 0 1.8-.9 1.5-1.9-.3-1 .4-2.1 1.5-2.1H17a4 4 0 0 0 4-4c0-5-4-10-9-10Z"/><circle cx="7.5" cy="11" r="1"/><circle cx="10.5" cy="7" r="1"/><circle cx="15.5" cy="7.5" r="1"/></svg>
+    </div>
+  </div>
+</div>
+
+<div class="app">
+
+  <!-- ============ HOME VIEW ============ -->
+  <div class="view active" id="view-home">
+    <div class="hero">
+      <div class="hero-eyebrow"><span class="dot"></span> <span id="heroQCount">82</span> questions · explications détaillées · exhibits GUI réels</div>
+      <h1>Entraînement personnel<br>Fortinet NSE 4 — FortiOS 7.6</h1>
+      <p>Prépare l'examen FCP dans des conditions proches du réel : mêmes captures d'écran, mêmes types de questions à choix multiples, correction immédiate et explication technique après chaque réponse.</p>
+
+      <div class="stat-row" id="statRow"></div>
+
+      <div class="quicksim-cta" id="quickSimCta">
+        <div>
+          <div class="qtitle">🎯 Simulation d'examen complète</div>
+          <div class="qdesc" id="quickSimDesc">50 questions aléatoires · 50 minutes chronométrées · conditions Pearson VUE (aucune correction avant la fin)</div>
+        </div>
+        <button class="btn btn-primary" id="quickSimBtn">Lancer la simulation →</button>
+      </div>
+
+      <div class="quicksim-cta" id="coachCta" style="border-color:var(--border); background:linear-gradient(120deg, var(--tint-blue), transparent);">
+        <div>
+          <div class="qtitle">📚 Coach FCP FortiGate</div>
+          <div class="qdesc">Concepts clés, pièges d'examen, checklist d'exhibits et commandes CLI à connaître — organisés par les 5 domaines officiels du blueprint.</div>
+        </div>
+        <button class="btn btn-ghost" id="coachCtaBtn">Explorer le Coach →</button>
+      </div>
+
+      <div class="domain-mastery" id="homeDomainMastery">
+        <span class="opt-label">Maîtrise par domaine officiel (FCP)</span>
+        <div id="homeDomainRows"></div>
+      </div>
+    </div>
+
+    <div class="opt-block" style="margin-top:8px;">
+      <span class="opt-label">Type de session</span>
+      <div class="stype-row" id="stypeRow">
+        <div class="stype-card active" data-stype="study">
+          <h4>📖 Étude <span class="stype-badge">Recommandé pour apprendre</span></h4>
+          <p>Correction et explication détaillée immédiatement après chaque réponse. Pas de chronomètre.</p>
+        </div>
+        <div class="stype-card" data-stype="real">
+          <h4>⏱️ Examen réel <span class="stype-badge">Conditions Pearson VUE</span></h4>
+          <p>Aucune correction avant la fin. Chronomètre (1 min/question). Résultats et corrigé uniquement dans le rapport final.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mode-tabs" id="modeTabs">
+      <div class="mode-tab active" data-mode="pool">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+        Pool aléatoire
+      </div>
+      <div class="mode-tab" data-mode="exam">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6M9 9h1"/></svg>
+        Examens prédéfinis
+      </div>
+      <div class="mode-tab" data-mode="theme">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h10M4 18h7"/></svg>
+        Par thème
+      </div>
+    </div>
+
+    <!-- POOL PANEL -->
+    <div class="mode-panel active" id="panel-pool">
+      <span class="opt-label">Nombre de questions</span>
+      <div class="chip-row" id="poolCountRow"></div>
+
+      <div class="opt-block">
+        <span class="opt-label">Portée</span>
+        <div class="chip-row" id="poolScopeRow">
+          <div class="chip-btn active" data-scope="all" id="scopeAllChip">Toute la banque</div>
+          <div class="chip-btn" data-scope="missed">Uniquement mes erreurs</div>
+          <div class="chip-btn" data-scope="flagged">Uniquement marquées</div>
+        </div>
+        <p style="font-size:11.5px; color:var(--text-faint); margin:10px 2px 0; line-height:1.5;">
+          🔁 Le tirage priorise automatiquement les questions jamais vues ou ratées la dernière fois — les questions déjà maîtrisées reviennent plus rarement.
+        </p>
+      </div>
+    </div>
+
+    <!-- EXAM PANEL -->
+    <div class="mode-panel" id="panel-exam">
+      <span class="opt-label">Choisis un examen blanc</span>
+      <div class="card-grid" id="examGrid"></div>
+    </div>
+
+    <!-- THEME PANEL -->
+    <div class="mode-panel" id="panel-theme">
+      <span class="opt-label">Sélectionne un ou plusieurs thèmes (agenda officiel FCP)</span>
+      <div class="card-grid" id="themeGrid"></div>
+    </div>
+
+    <div class="start-bar">
+      <div class="summary" id="startSummary">Sélectionne tes options ci-dessus pour commencer.</div>
+      <button class="btn btn-primary" id="startBtn">
+        Démarrer la session
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
+    </div>
+
+    <div class="hist-card" id="homeHistoryCard">
+      <div class="hist-head">
+        <div class="hist-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h.01M9 16h.01M13 12h3M13 16h3"/></svg></div>
+        <div class="hist-title">Historique<br>des examens</div>
+      </div>
+      <div id="homeHistoryList"></div>
+      <button class="hist-all-btn" id="historyAllBtn">Voir tous les résultats</button>
+    </div>
+
+    <footer class="credits">NSE4-FGT Trainer v__APP_VERSION__ · outil personnel d'entraînement · données stockées uniquement dans ce navigateur<br>Conçu et dirigé par Blanchard · développé avec Claude (Anthropic) · projet indépendant, non affilié à Fortinet</footer>
+  </div>
+
+  <!-- ============ QUIZ VIEW ============ -->
+  <div class="view" id="view-quiz">
+    <div class="quiz-header">
+      <div class="progress-wrap">
+        <div class="progress-meta">
+          <span id="quizModeLabel">Session</span>
+          <span id="quizProgressLabel">Question 1 / 10</span>
+        </div>
+        <div class="progress-track" id="progressTrack"></div>
+      </div>
+      <div class="timer-block" id="timerBlock">
+        <span class="timer-lbl" id="timerLbl">Temps écoulé</span>
+        <span class="timer-val mono" id="timerDisplay">00:00</span>
+      </div>
+      <div class="quiz-actions">
+        <button class="btn btn-ghost btn-sm" id="quitBtn">Quitter</button>
+      </div>
+    </div>
+    <div class="domain-time-row" id="domainTimeRow"></div>
+
+    <div class="qcard" id="qcard"></div>
+
+    <div class="qfooter" id="quizFooterNav" style="margin-top:0;">
+      <button class="btn btn-ghost" id="prevBtn">← Précédente</button>
+      <button class="btn btn-primary" id="nextBtn">Suivante →</button>
+    </div>
+  </div>
+
+  <!-- ============ RESULTS VIEW ============ -->
+  <div class="view" id="view-results">
+    <div class="results-hero">
+      <div class="score-ring-wrap">
+        <svg viewBox="0 0 140 140" width="180" height="180">
+          <circle class="score-ring-bg" cx="70" cy="70" r="60"></circle>
+          <circle class="score-ring-fg" id="scoreRingFg" cx="70" cy="70" r="60" stroke-dasharray="377" stroke-dashoffset="377"></circle>
+        </svg>
+        <div class="score-ring-text">
+          <div class="pct" id="scorePct">0%</div>
+          <div class="lbl">score</div>
+        </div>
+      </div>
+      <div class="hero-eyebrow" style="margin-bottom:14px;">NSE4 / FCP Readiness Report</div>
+      <div class="results-title" id="resultsTitle">Session terminée</div>
+      <div class="results-sub" id="resultsSub"></div>
+    </div>
+
+    <div class="result-stats" id="resultStatsRow"></div>
+
+    <div class="domain-mastery">
+      <span class="opt-label">Maîtrise par domaine officiel FCP</span>
+      <div id="resultDomainRows"></div>
+      <div class="badge-row" id="badgeRow"></div>
+    </div>
+
+    <div class="reco-box" id="recoBox" style="display:none;">
+      <h4>📋 Recommandation avant le prochain examen blanc</h4>
+      <ol class="reco-list" id="recoList"></ol>
+    </div>
+
+    <div class="theme-breakdown">
+      <span class="opt-label">Détail par thème</span>
+      <div id="themeBreakdown"></div>
+    </div>
+
+    <div class="theme-breakdown" id="historyBlock" style="display:none;">
+      <span class="opt-label">Progression dans le temps</span>
+      <div class="history-row" id="historyRow"></div>
+    </div>
+
+    <div class="result-actions">
+      <button class="btn btn-ghost" id="reviewMissedBtn">Revoir mes erreurs</button>
+      <button class="btn btn-ghost" id="backHomeBtn">Retour à l'accueil</button>
+      <button class="btn btn-primary" id="retryBtn">Recommencer cette session</button>
+    </div>
+
+    <div class="review-list" id="reviewList"></div>
+  </div>
+
+  <!-- ============ STATS VIEW ============ -->
+  <div class="view" id="view-stats">
+    <div class="hero" style="padding-top:32px; padding-bottom:6px;">
+      <div class="hero-eyebrow"><span class="dot"></span> Tableau de bord</div>
+      <h1 style="font-size:clamp(26px,4vw,36px);">Mes statistiques</h1>
+      <p>Ton plan jusqu'au jour J, ton niveau de préparation domaine par domaine, et les points qui te coûtent le plus.</p>
+    </div>
+    <div id="statsRoot"></div>
+    <div class="result-actions"><button class="btn btn-ghost" id="statsBackBtn">← Retour à l'accueil</button></div>
+  </div>
+
+  <!-- ============ HISTORY VIEW ============ -->
+  <div class="view" id="view-history">
+    <div class="hero" style="padding-top:32px; padding-bottom:10px;">
+      <div class="hero-eyebrow"><span class="dot"></span> Historique</div>
+      <h1 style="font-size:clamp(26px,4vw,36px);">Tous tes résultats</h1>
+      <p>Chaque session terminée est enregistrée. Clique sur « Revoir » pour rouvrir l'examen avec tes réponses et la correction détaillée.</p>
+      <div class="stat-row" id="historyStatsRow"></div>
+    </div>
+    <div class="hist-card" style="margin-top:20px;">
+      <div class="hist-head">
+        <div class="hist-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h.01M9 16h.01M13 12h3M13 16h3"/></svg></div>
+        <div class="hist-title">Historique<br>des examens</div>
+      </div>
+      <div id="fullHistoryList"></div>
+    </div>
+    <div class="result-actions"><button class="btn btn-ghost" id="historyBackBtn">← Retour à l'accueil</button></div>
+  </div>
+
+  <!-- ============ COACH VIEW ============ -->
+  <div class="view" id="view-coach">
+    <div class="hero" style="padding-top:32px; padding-bottom:10px;">
+      <div class="hero-eyebrow"><span class="dot"></span> Coach FCP FortiGate</div>
+      <h1 style="font-size:clamp(26px,4vw,36px);">Guide de révision par domaine officiel</h1>
+      <p>Concepts clés, pièges d'examen classiques, checklist d'exhibits et commandes CLI à connaître — pour chacun des 5 domaines du blueprint Fortinet NSE 4 / FCP.</p>
+    </div>
+
+    <div class="mode-tabs" id="coachDomainTabs"></div>
+
+    <div id="coachDomainPanel"></div>
+
+    <footer class="credits">Coach FCP FortiGate · contenu de révision statique + statistiques calculées depuis ta progression locale</footer>
+  </div>
+
+</div>
+
+<script>
+/* ============================================================
+   DATA
+   ============================================================ */
+const QUESTIONS = __QUESTIONS_JSON__;
+
+const THEME_ORDER = [
+  "Système & Réseau","Logs & Monitoring","Politiques de pare-feu & NAT","Routing",
+  "Authentification pare-feu","Fortinet Single Sign-On (FSSO)","Certificats & Inspection SSL",
+  "Antivirus","Filtrage Web","IPS & Contrôle d'application","VPN IPsec/SSL","SD-WAN",
+  "Haute disponibilité (HA)","Diagnostics & Dépannage","FortiGate in the Cloud","FortiSASE"
+];
+
+const THEME_SHORT = {
+  "Système & Réseau":"SYS","Logs & Monitoring":"LOG","Politiques de pare-feu & NAT":"FW-NAT",
+  "Routing":"ROUTE","Authentification pare-feu":"AUTH","Fortinet Single Sign-On (FSSO)":"FSSO",
+  "Certificats & Inspection SSL":"SSL","Antivirus":"AV","Filtrage Web":"WEB",
+  "IPS & Contrôle d'application":"IPS","VPN IPsec/SSL":"VPN","SD-WAN":"SDWAN",
+  "Haute disponibilité (HA)":"HA","Diagnostics & Dépannage":"DIAG",
+  "FortiGate in the Cloud":"CLOUD","FortiSASE":"SASE"
+};
+
+const EXAMS = [
+  {id:"examA", name:"Examen Blanc A", range:[1,17], desc:"HA, IPS, Auth, SD-WAN, Routing, VPN — questions 1 à 17"},
+  {id:"examB", name:"Examen Blanc B", range:[18,34], desc:"Conserve mode, VPN, FSSO, SD-WAN, NAT, Security Fabric — questions 18 à 34"},
+  {id:"examC", name:"Examen Blanc C", range:[35,50], desc:"Web filter, IPS, SSL, FSSO, diagnostics, NAT — questions 35 à 50"},
+  {id:"examD", name:"Examen Blanc D", range:[51,66], desc:"SSL VPN, certificats, Security Fabric, FSSO, HA, conserve mode — questions 51 à 66"},
+  {id:"examE", name:"Examen Blanc E", range:[67,82], desc:"Antivirus, HA, logs, Cloud, FortiSASE, VPN, routing — questions 67 à 82"},
+  {id:"examFull", name:"Examen complet", range:[1,QUESTIONS.length], desc:`Les ${QUESTIONS.length} questions de la banque, dans l'ordre des supports d'examen`},
+];
+
+/* ============================================================
+   OFFICIAL FCP DOMAINS (FortiOS 7.6 Administrator exam blueprint)
+   ============================================================ */
+const DOMAINS = [
+  {id:"d1", name:"Deployment and System Configuration", short:"Déploiement & Système", weight:"20–25%",
+   themes:["Système & Réseau","Logs & Monitoring","Haute disponibilité (HA)","Diagnostics & Dépannage","FortiGate in the Cloud","FortiSASE"]},
+  {id:"d2", name:"Firewall Policies and Authentication", short:"Pare-feu & Authentification", weight:"20–25%",
+   themes:["Politiques de pare-feu & NAT","Authentification pare-feu","Fortinet Single Sign-On (FSSO)"]},
+  {id:"d3", name:"Content Inspection", short:"Inspection de contenu", weight:"25–30%",
+   themes:["Certificats & Inspection SSL","Filtrage Web","IPS & Contrôle d'application","Antivirus"]},
+  {id:"d4", name:"Routing", short:"Routing", weight:"10–15%",
+   themes:["Routing","SD-WAN"]},
+  {id:"d5", name:"VPN", short:"VPN", weight:"10–15%",
+   themes:["VPN IPsec/SSL"]},
+];
+function themeToDomain(theme){
+  return DOMAINS.find(d=>d.themes.includes(theme)) || null;
+}
+function domainColor(pct){
+  return pct>=85 ? 'var(--good)' : pct>=60 ? 'var(--warn)' : 'var(--bad)';
+}
+
+/* ============================================================
+   COACH FCP FORTIGATE — static revision content per domain
+   ============================================================ */
+const COACH_CONTENT = {
+  d1: {
+    intro: "Les fondamentaux : mise en service, réglages système, HA, logs, diagnostics et cloud.",
+    concepts: [
+      "Factory default : IP 192.168.1.99/24, utilisateur admin",
+      "NAT mode = mode de fonctionnement par défaut",
+      "DHCP activé sur les modèles entrée de gamme",
+      "HTTPS / SSH / PING activés par défaut sur le port de management",
+      "Toujours sauvegarder la configuration avant toute modification",
+      "Lire les Release Notes avant tout upgrade de firmware",
+      "FortiGuard nécessite un accès Internet + une licence valide",
+      "Security Fabric = écosystème Fortinet interconnecté",
+      "FortiAnalyzer = collecte et stockage centralisé des logs",
+      "FortiManager = administration centralisée des FortiGate",
+      "Interface Roles : LAN, WAN, DMZ, Undefined",
+      "DNS indispensable pour la résolution FQDN et FortiGuard",
+      "NTP indispensable pour les certificats, l'OTP et l'horodatage des logs",
+      "Automation Stitches = automatisation déclenchée par événements",
+      "Le mode conserve bloque les changements de configuration au-delà d'un seuil mémoire",
+    ],
+    traps: [
+      {code:"NTP désynchronisé", desc:"Casse la validité des certificats, des OTP (2FA) et l'horodatage exact des logs — à vérifier avant d'accuser un autre composant."},
+      {code:"FortiGuard inaccessible", desc:"Souvent causé par l'absence de route par défaut ou de résolution DNS, pas par la licence elle-même."},
+      {code:"Interface management non autorisée HTTPS", desc:"Le service admin access (HTTPS/SSH/PING) doit être explicitement coché sur l'interface utilisée pour se connecter."},
+      {code:"Trusted Host bloque l'accès admin", desc:"Si configuré, seules les IP listées peuvent joindre l'interface d'administration — un oubli bloque l'admin lui-même."},
+      {code:"Restore déclenche un redémarrage", desc:"La restauration d'une configuration provoque toujours un reboot du FortiGate, à anticiper en prod."},
+      {code:"Backup chiffré = mêmes modèle + firmware + mot de passe", desc:"Une restauration échoue si l'un de ces trois éléments diffère de la sauvegarde d'origine."},
+      {code:"Security Fabric Root ≠ Fabric Member", desc:"Le Root a un rôle et des permissions différents (vision globale) — attention aux questions qui inversent les deux rôles."},
+      {code:"Device Detection oublié", desc:"Sans cette option activée sur l'interface, FortiGate n'identifie pas les appareils du réseau (visibilité incomplète)."},
+      {code:"FortiManager ≠ FortiAnalyzer", desc:"FortiManager gère la configuration ; FortiAnalyzer collecte et analyse les logs — ne pas confondre leurs rôles dans les questions."},
+      {code:"Interface WAN avec le mauvais rôle", desc:"Un rôle d'interface incorrect (ex. WAN déclaré comme LAN) peut fausser des fonctionnalités qui dépendent du rôle (comme certains assistants de configuration)."},
+    ],
+    exhibits: ["Hostname","Firmware","Build","FortiGuard","Security Fabric Role","Admin Access","Trusted Hosts","DNS","NTP","Conserve Mode","CPU","Memory"],
+    commands: ["get system status","get system performance status","diagnose sys top","get system ha status","diagnose debug application ntpd -1","execute ping google.com","diagnose sys ntp status","get system interface physical"],
+  },
+  d2: {
+    intro: "Politiques de pare-feu, NAT et authentification (LDAP, RADIUS, FSSO).",
+    concepts: [
+      "Policy Order : first match wins (première règle qui correspond)",
+      "Implicit Deny : politique de refus implicite en fin de liste (ID 0)",
+      "FortiGate est un firewall stateful (suivi de session)",
+      "Une politique se définit par Source, Destination, Service, Schedule",
+      "NAT : SNAT (source), DNAT/VIP (destination)",
+      "Central NAT centralise les règles NAT indépendamment des policies",
+      "LDAP : authentification via annuaire, filtrage par groupe",
+      "RADIUS : authentification via serveur distant, attributs personnalisés (ex. Fortinet-Group-Name)",
+      "FSSO : authentification transparente basée sur les logs de connexion Windows",
+      "Identity-based policies : policies qui matchent sur l'utilisateur/groupe plutôt que l'IP seule",
+    ],
+    traps: [
+      {code:"Policy 0 = implicit deny", desc:"Ce n'est pas une politique créée par l'administrateur — c'est le refus par défaut quand rien d'autre ne correspond."},
+      {code:"Mauvais ordre de règles", desc:"Une règle plus permissive placée avant une règle plus stricte capture le trafic en premier (first match wins)."},
+      {code:"NAT activé inutilement", desc:"Active le SNAT alors que ce n'est pas voulu, ce qui masque l'IP source réelle et peut casser certains flux."},
+      {code:"Service incorrect", desc:"Un service trop large (ALL) ou trop restrictif (manque DNS pour l'authentification active, par exemple) change le comportement attendu."},
+      {code:"Mauvais Schedule", desc:"Une politique programmée sur une plage horaire incorrecte peut sembler bloquer du trafic qui devrait pourtant être autorisé."},
+      {code:"VIP utilisé mais aucune policy associée", desc:"Un objet VIP créé seul ne fait rien : il faut une politique de pare-feu qui le référence en destination."},
+      {code:"Source/Destination inversées", desc:"Une erreur classique de lecture rapide d'exhibit — toujours vérifier le sens du flux avant de conclure."},
+      {code:"FQDN non résolu", desc:"Un objet adresse basé sur un FQDN doit d'abord être résolu par DNS avant de pouvoir être utilisé pleinement (ex. dans une route)."},
+      {code:"FSSO non remonté", desc:"Vérifier d'abord la liste des utilisateurs actifs FSSO côté FortiGate avant de suspecter la policy elle-même."},
+      {code:"Mauvais groupe LDAP", desc:"Le filtre de groupe LDAP mal configuré empêche l'association correcte utilisateur → groupe → policy."},
+    ],
+    exhibits: ["Policy ID","Incoming Interface","Outgoing Interface","Source","Destination","Service","Action","NAT","Log Setting","Inspection Mode"],
+    commands: ["diagnose firewall iprope list","get firewall policy","diagnose debug flow filter addr <ip>","diagnose debug flow trace start 20","diagnose test authserver ldap <server> <user> <pass>","diagnose debug fsso-polling refresh-user","get user info fsso-fortigate"],
+  },
+  d3: {
+    intro: "★ Le domaine le plus lourd du blueprint (25–30% de l'examen) : SSL, Web Filter, App Control, Antivirus, IPS.",
+    concepts: [
+      "SSL Certificate Inspection vs Full SSL (Deep) Inspection",
+      "SNI (Server Name Indication), SAN, CN — champs clés d'un certificat",
+      "Certificate Chain : la confiance remonte jusqu'à la CA racine",
+      "Web Filter : Categories, URL Filter, Rating override, Quota",
+      "Application Control : signatures, monitoring, blocage",
+      "Antivirus : Flow-based vs Proxy-based, Outbreak Protection",
+      "IPS : Sensors, Signatures, Rate-based signatures",
+      "DNS Filter ≠ Web Filter (deux mécanismes distincts)",
+      "DLP (Data Loss Prevention) pour les fuites de données sensibles",
+      "Threat Feeds : listes externes (IP/domaine) réputation menace",
+      "Botnet detection intégrée à la sécurité réseau",
+      "Security Rating : audit de conformité aux bonnes pratiques",
+      "External Connectors : sources d'identité/tags externes (AD, cloud, etc.)",
+    ],
+    traps: [
+      {code:"Flow-based ≠ Proxy-based", desc:"Changent la façon dont le trafic est inspecté (à la volée vs mise en buffer) et les fonctionnalités disponibles selon le mode."},
+      {code:"Deep Inspection obligatoire pour certaines applications", desc:"Sans elle, certaines apps modernes (HTTPS, QUIC) ne peuvent pas être identifiées ou contrôlées finement."},
+      {code:"Certificate Inspection ne déchiffre pas", desc:"Elle ne lit que les métadonnées du certificat (SNI/CN), jamais le contenu chiffré — contrairement à la Full SSL Inspection."},
+      {code:"DNS Filter ≠ Web Filter", desc:"Le DNS Filter agit au niveau de la résolution de noms, le Web Filter au niveau de la requête HTTP/HTTPS elle-même."},
+      {code:"Quota ≠ Block", desc:"Une catégorie en quota autorise l'accès jusqu'à une limite de temps/volume ; elle ne bloque pas immédiatement."},
+      {code:"SNI absent", desc:"Sans SNI (client ancien ou trafic non-HTTPS standard), FortiGate ne peut pas identifier le nom de domaine visé pour le filtrage."},
+      {code:"Certificat non approuvé", desc:"Un certificat signé par une CA privée FortiGate non installée côté client déclenche systématiquement un avertissement navigateur."},
+      {code:"Fortinet_CA_SSL non installé", desc:"Sans ce certificat CA dans le magasin de confiance du client, toute inspection SSL complète génère des avertissements."},
+      {code:"Catégorie locale ≠ FortiGuard", desc:"Une catégorie/override local prend le pas sur le classement FortiGuard par défaut — vérifier lequel s'applique dans l'exhibit."},
+      {code:"Mauvais profil appliqué", desc:"Vérifier que le bon profil de sécurité (AV/Web/App Control) est bien attaché à LA politique concernée par la question."},
+      {code:"Botnet détecté mais autorisé", desc:"La détection seule ne bloque pas : il faut que l'action configurée soit Block, pas seulement Monitor."},
+      {code:"Antivirus HTTPS sans SSL Inspection", desc:"Sans inspection SSL (au moins certificate inspection), l'antivirus ne peut pas scanner le contenu chiffré en HTTPS."},
+      {code:"HSTS casse parfois la Deep Inspection", desc:"Certains sites HSTS refusent le certificat re-signé de FortiGate, d'où les exemptions prédéfinies de certaines catégories."},
+      {code:"ECH et TLS modernes", desc:"Le chiffrement du SNI (Encrypted Client Hello) peut réduire la visibilité de FortiGate sur la destination réelle du trafic."},
+      {code:"Exemption SSL oubliée", desc:"Une catégorie censée être exemptée d'inspection SSL mais mal configurée peut casser l'accès à des sites légitimes (banque, santé)."},
+    ],
+    exhibits: ["Inspection Mode","SSL Profile","Certificate Inspection","Deep Inspection","Category","Action","Application","IPS Sensor","AV Profile"],
+    commands: ["diagnose debug rating","diagnose test application ipsmonitor 1","diagnose antivirus icapd stats","diagnose wad debug enable category all","get webfilter categories","diagnose debug application urlfilter -1","get ips session","diagnose sys sslvpn list"],
+  },
+  d4: {
+    intro: "Routage statique, ECMP, et SD-WAN — 10 à 15% de l'examen, souvent sous-estimé.",
+    concepts: [
+      "Static Route : route configurée manuellement",
+      "Default Route : route 0.0.0.0/0, route de dernier recours",
+      "Administrative Distance : fiabilité d'une source de routage (plus petit = préféré)",
+      "Priority : départage les routes de même distance",
+      "ECMP (Equal-Cost Multi-Path) : répartition entre routes de coût égal",
+      "Route Lookup : recherche de la route la plus spécifique (longest prefix match)",
+      "Policy Route : route basée sur des critères autres que la destination (prioritaire sur la table de routage classique, sauf SD-WAN)",
+      "RPF (Reverse Path Forwarding) : anti-spoofing basé sur la route de retour",
+      "Link Monitoring : sondes de santé de lien (SD-WAN Performance SLA)",
+      "SD-WAN SLA : critères de qualité de lien (latence, gigue, perte)",
+    ],
+    traps: [
+      {code:"Distance Administrative", desc:"Détermine quelle source de routage (statique, OSPF, BGP...) est préférée en priorité — toujours vérifier avant la priorité."},
+      {code:"Priority", desc:"Ne départage qu'entre routes ayant la MÊME distance administrative — ne pas la comparer entre deux sources différentes."},
+      {code:"ECMP mal interprété", desc:"L'ECMP répartit la charge entre routes à coût strictement égal (même distance ET même priorité), pas juste \"plusieurs routes possibles\"."},
+      {code:"Policy Route avant Route Table", desc:"Une policy route correspondante est évaluée avant la table de routage classique — mais après les règles SD-WAN si activé."},
+      {code:"RPF fail", desc:"Un paquet peut être bloqué en RPF strict même si une route existe, si ce n'est pas la MEILLEURE route de retour vers la source."},
+      {code:"Gateway erronée", desc:"Une route avec une gateway injoignable reste dans la table mais ne permet aucun trafic réel — vérifier l'état (status/link)."},
+      {code:"Route par défaut oubliée", desc:"Sans route 0.0.0.0/0, tout trafic vers une destination inconnue est tout simplement rejeté."},
+      {code:"SD-WAN sélection inattendue", desc:"Le membre SD-WAN choisi dépend de la stratégie configurée (manual, lowest cost SLA, etc.), pas seulement de la bande passante brute."},
+    ],
+    exhibits: ["Destination","Gateway","Distance","Priority","Interface","ECMP","SLA","Selected","Status"],
+    commands: ["get router info routing-table all","get router info routing-table static","diagnose firewall proute list","diagnose sys sdwan health-check status","diagnose sys sdwan service","get router info kernel"],
+  },
+  d5: {
+    intro: "IPsec et SSL VPN — Phase 1/2, DPD, mode tunnel/web, redondance.",
+    concepts: [
+      "Phase 1 : négociation du tunnel sécurisé (IKE)",
+      "Phase 2 : négociation des sélecteurs et du chiffrement du trafic réel",
+      "IKEv1 vs IKEv2 : versions du protocole d'échange de clés",
+      "DPD (Dead Peer Detection) : détection de tunnel mort",
+      "Route-based VPN : tunnel représenté par une interface virtuelle",
+      "SSL VPN : Tunnel Mode (accès réseau complet) vs Web Mode (reverse proxy HTTP)",
+      "DTLS : accélère le SSL VPN tunnel mode via UDP",
+      "Split Tunnel vs Full Tunnel : quel trafic passe par le VPN",
+      "Dial-up VPN : IPsec pour utilisateurs nomades",
+      "Hub & Spoke, Redundancy : topologies IPsec multi-sites",
+    ],
+    traps: [
+      {code:"P1 UP / P2 DOWN", desc:"Le tunnel de base est établi mais le trafic ne passe pas — chercher un mismatch dans les paramètres de phase 2 (sélecteurs, chiffrement)."},
+      {code:"AES mismatch", desc:"Les deux extrémités doivent utiliser exactement le même algorithme de chiffrement (ex. AES128 vs AES256)."},
+      {code:"DH mismatch", desc:"Le groupe Diffie-Hellman doit être identique des deux côtés pour établir la clé partagée."},
+      {code:"PSK mismatch", desc:"Une clé pré-partagée différente entre les deux FortiGate empêche systématiquement l'établissement du tunnel."},
+      {code:"Selectors mismatch", desc:"Les sous-réseaux locaux/distants déclarés en phase 2 doivent se correspondre en miroir exact entre les deux extrémités."},
+      {code:"Route absente", desc:"Même avec un tunnel actif, sans route vers le réseau distant (statique ou via l'interface VPN), le trafic ne peut pas être routé."},
+      {code:"Policy absente", desc:"Un tunnel IPsec actif sans politique de pare-feu associée ne laissera passer aucun trafic utilisateur."},
+      {code:"DPD mal configuré", desc:"On-Idle vs On-Demand changent la condition exacte de déclenchement des sondes de test de vie du tunnel."},
+      {code:"DTLS désactivé", desc:"Sans DTLS, le SSL VPN tunnel mode retombe sur TCP, plus lent en cas de perte de paquets/latence."},
+      {code:"Split Tunnel mal configuré", desc:"Une route split tunnel incomplète peut exposer du trafic non voulu en dehors du tunnel, ou au contraire tout forcer inutilement dedans."},
+    ],
+    exhibits: ["Phase1","Phase2","Status","IKE Version","Remote Gateway","Selectors","Encryption","Hash","DH Group","DPD"],
+    commands: ["diagnose vpn tunnel list","diagnose vpn ike log-filter name <tunnel>","diagnose debug application ike -1","get vpn ipsec tunnel summary","diagnose vpn tunnel stat","execute vpn certificate list","get vpn ssl monitor"],
+  },
+};
+
+/* ============================================================
+   STORAGE
+   ============================================================ */
+const STORE_KEY = "nse4fgt_progress_v1";
+const DEFAULT_EXAM_DATE = '2026-12-08T15:00';
+function dayKey(ts){
+  const d = new Date(ts); const p = n=>String(n).padStart(2,'0');
+  return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`;
+}
+function normalizeStoreData(parsed){
+  parsed = (parsed && typeof parsed==='object') ? parsed : {};
+  parsed.stats = (parsed.stats && typeof parsed.stats==='object') ? parsed.stats : {};
+  parsed.flagged = (parsed.flagged && typeof parsed.flagged==='object') ? parsed.flagged : {};
+  parsed.history = Array.isArray(parsed.history) ? parsed.history : [];
+  parsed.activity = (parsed.activity && typeof parsed.activity==='object') ? parsed.activity : {};
+  parsed.settings = (parsed.settings && typeof parsed.settings==='object') ? parsed.settings : {};
+  if(parsed.settings.theme!=='dark' && parsed.settings.theme!=='light') delete parsed.settings.theme;
+  if(!/^#[0-9a-fA-F]{6}$/.test(String(parsed.settings.accent||''))) delete parsed.settings.accent;
+  if(!parsed.settings.examDate) parsed.settings.examDate = DEFAULT_EXAM_DATE;
+  if(!parsed.settings.planStart) parsed.settings.planStart = dayKey(Date.now());
+  return parsed;
+}
+function loadStore(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    const parsed = raw ? JSON.parse(raw) : null;
+    const needsPersist = !parsed || !parsed.settings || !parsed.settings.planStart;
+    const norm = normalizeStoreData(parsed);
+    // le jour de départ du plan doit être figé dès la première ouverture
+    if(needsPersist){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(norm)); }catch(e){} }
+    return norm;
+  }catch(e){ return normalizeStoreData(null); }
+}
+function saveStore(){ localStorage.setItem(STORE_KEY, JSON.stringify(store)); }
+let store = loadStore();
+
+function exportStore(){
+  const dataStr = JSON.stringify(store, null, 2);
+  const blob = new Blob([dataStr], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const d = new Date();
+  const stamp = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `nse4fgt-progress-${stamp}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url), 2000);
+  showToast('Fichier de sauvegarde téléchargé.');
+}
+function importStoreFromFile(file){
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (e)=>{
+    let parsed;
+    try{
+      parsed = JSON.parse(e.target.result);
+    }catch(err){
+      showToast("Fichier invalide : ce n'est pas un JSON exploitable.");
+      return;
+    }
+    const normalized = normalizeStoreData(parsed);
+    const hasAnyData = Object.keys(normalized.stats).length>0 || Object.keys(normalized.flagged).length>0 || normalized.history.length>0 || Object.keys(normalized.activity).length>0;
+    if(!hasAnyData){
+      showToast("Ce fichier ne contient aucune donnée de progression reconnaissable.");
+      return;
+    }
+    if(!confirm("Importer ce fichier remplacera TOUTE ta progression actuelle (scores, questions marquées, historique) par celle du fichier. Continuer ?")) return;
+    store = normalized;
+    saveStore();
+    applyAppearance(store.settings);
+    byId('methodModal').classList.remove('active');
+    byId('backupModal').classList.remove('active');
+    renderHome();
+    showToast('Progression restaurée avec succès.');
+  };
+  reader.onerror = ()=> showToast("Impossible de lire ce fichier.");
+  reader.readAsText(file);
+}
+
+function todayActivity(){
+  const k = dayKey(Date.now());
+  return store.activity[k] || (store.activity[k] = {q:0, c:0, ms:0});
+}
+function blankStat(){ return {attempts:0, correct:0, lastCorrect:null, totalTimeMs:0, lastSeen:null}; }
+function recordAnswer(qid, correct, answered){
+  const s = store.stats[qid] || blankStat();
+  s.attempts += 1;
+  if(correct) s.correct += 1;
+  s.lastCorrect = correct;
+  store.stats[qid] = s;
+  if(answered !== false){            // une question laissée vide en examen réel n'est pas une question travaillée
+    const a = todayActivity(); a.q += 1; if(correct) a.c += 1;
+  }
+  saveStore();
+}
+function recordTime(qid, elapsedMs){
+  if(!elapsedMs || elapsedMs<=0) return;
+  const s = store.stats[qid] || blankStat();
+  s.totalTimeMs = (s.totalTimeMs||0) + elapsedMs;
+  s.lastSeen = Date.now();
+  store.stats[qid] = s;
+  todayActivity().ms += elapsedMs;
+  saveStore();
+}
+// temps de réflexion jusqu'à la réponse (explication exclue) — alimente la section « Mon rythme »
+function recordAnswerTime(qid, ms){
+  if(!ms || ms<=0) return;
+  const s = store.stats[qid] || blankStat();
+  s.ansTimeMs = (s.ansTimeMs||0) + ms;
+  s.ansN = (s.ansN||0) + 1;
+  store.stats[qid] = s;
+  saveStore();
+}
+function toggleFlag(qid){
+  store.flagged[qid] = !store.flagged[qid];
+  saveStore();
+  return store.flagged[qid];
+}
+function isMissed(qid){
+  const s = store.stats[qid];
+  return s && s.lastCorrect === false;
+}
+
+/* ============================================================
+   UTIL
+   ============================================================ */
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+/* ============================================================
+   SPACED-REPETITION-STYLE WEIGHTING (Pool aléatoire)
+   Never-seen and previously-failed questions are drawn far more
+   often than questions already mastered, while keeping a random
+   order rather than a fixed priority list.
+   ============================================================ */
+function questionPriorityWeight(q){
+  const s = store.stats[q.id];
+  if(!s || !s.attempts) return 6;          // jamais vue — priorité maximale
+  if(s.lastCorrect === false) return 4;    // dernière tentative ratée
+  return 1;                                // déjà maîtrisée — tirée plus rarement
+}
+function weightedSample(list, n){
+  // Efraimidis–Spirakis weighted random sampling without replacement:
+  // each item gets a random key raised to 1/weight, then we keep the top-n keys.
+  const scored = list.map(q=>({
+    q,
+    key: Math.pow(Math.random() || 1e-9, 1/questionPriorityWeight(q))
+  }));
+  scored.sort((a,b)=>b.key-a.key);
+  return scored.slice(0, n).map(s=>s.q);
+}
+function formatMs(ms){
+  const totalSec = Math.max(0, Math.round(ms/1000));
+  const m = Math.floor(totalSec/60);
+  const s = totalSec%60;
+  return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}
+function formatSecShort(ms){
+  const s = Math.round(ms/1000);
+  return s + 's';
+}
+// Compute mastery per domain from a given set of correctness flags {qid: bool} over a given question subset
+function computeDomainMastery(questionSubset, correctFn){
+  const byDomain = {};
+  DOMAINS.forEach(d=>{ byDomain[d.id] = {domain:d, correct:0, total:0}; });
+  questionSubset.forEach(q=>{
+    const d = themeToDomain(q.theme);
+    if(!d) return;
+    const res = correctFn(q);
+    if(res===null || res===undefined) return; // not attempted, skip from denominator
+    byDomain[d.id].total++;
+    if(res) byDomain[d.id].correct++;
+  });
+  return byDomain;
+}
+// Global (all-time) mastery from store.stats, across ALL questions (used on home page)
+function computeGlobalDomainMastery(){
+  return computeDomainMastery(QUESTIONS, (q)=>{
+    const s = store.stats[q.id];
+    if(!s || s.attempts===0) return null;
+    return !!s.lastCorrect;
+  });
+}
+function byId(id){ return document.getElementById(id); }
+function showToast(msg){
+  const t = byId('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(()=>t.classList.remove('show'), 2200);
+}
+function showView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  byId('view-'+name).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ============================================================
+   HOME VIEW LOGIC
+   ============================================================ */
+let selectedMode = 'pool';
+let selectedPoolCount = 20;
+let selectedPoolScope = 'all';
+let selectedExam = null;
+let selectedThemes = new Set();
+let sessionType = 'study'; // 'study' | 'real'
+
+function renderDomainRows(container, byDomain){
+  container.innerHTML = '';
+  DOMAINS.forEach(d=>{
+    const info = byDomain[d.id];
+    const hasData = info.total > 0;
+    const pct = hasData ? Math.round((info.correct/info.total)*100) : null;
+    const row = document.createElement('div');
+    row.className = 'dm-row';
+    row.innerHTML = `
+      <div class="dm-info">
+        <div class="dm-name">${d.short}</div>
+        <div class="dm-weight">Poids examen : ${d.weight}</div>
+      </div>
+      <div class="dm-bar-wrap"><div class="dm-bar" style="width:${hasData?pct:0}%; background:${hasData?domainColor(pct):'var(--border)'}"></div></div>
+      <div class="dm-pct" style="color:${hasData?domainColor(pct):'var(--text-faint)'}">${hasData ? pct+'%' : '—'}</div>
+    `;
+    container.appendChild(row);
+  });
+}
+
+function computeGlobalStats(){
+  const total = QUESTIONS.length;
+  let attempted = 0, correct = 0, missed = 0;
+  QUESTIONS.forEach(q=>{
+    const s = store.stats[q.id];
+    if(s && s.attempts>0){
+      attempted++;
+      if(s.lastCorrect) correct++; else missed++;
+    }
+  });
+  return {total, attempted, correct, missed};
+}
+
+function renderStatRow(){
+  const g = computeGlobalStats();
+  const pct = g.attempted ? Math.round((g.correct/g.attempted)*100) : 0;
+  byId('statRow').innerHTML = `
+    <div class="stat-chip"><div class="tile t-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7z"/></svg></div><div class="num accent">${g.total}</div><div class="lbl">Questions</div></div>
+    <div class="stat-chip"><div class="tile t-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m10 8.5 5 3.5-5 3.5z"/></svg></div><div class="num">${g.attempted}</div><div class="lbl">Déjà vues</div></div>
+    <div class="stat-chip"><div class="tile t-purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="12" width="4" height="9" rx="1"/><rect x="10" y="7" width="4" height="14" rx="1"/><rect x="17" y="3" width="4" height="18" rx="1"/></svg></div><div class="num good">${g.correct}</div><div class="lbl">Maîtrisées</div></div>
+    <div class="stat-chip"><div class="tile t-amber"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></div><div class="num bad">${g.missed}</div><div class="lbl">À revoir</div></div>
+  ` + homeCountdownChip();
+  const chip = byId('homeCountdownChip');
+  if(chip) chip.addEventListener('click', openStats);
+}
+function homeCountdownChip(){
+  const exam = parseExamTs();
+  if(exam==null || exam - Date.now() <= 0) return '';
+  const d = diffDays(exam, Date.now());
+  return `<div class="stat-chip home-countdown" id="homeCountdownChip" style="cursor:pointer" title="Ouvrir mon plan"><div class="tile t-accent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div class="num accent">${d===0 ? 'Jour J' : 'J-'+d}</div><div class="lbl">avant l'examen</div></div>`;
+}
+
+function renderPoolCounts(){
+  const total = QUESTIONS.length;
+  const counts = [10,20,50,total];
+  const row = byId('poolCountRow');
+  row.innerHTML = '';
+  counts.forEach(c=>{
+    const el = document.createElement('div');
+    el.className = 'chip-btn' + (c===selectedPoolCount ? ' active':'');
+    el.textContent = c===total ? `Toutes (${total})` : c + ' questions';
+    el.onclick = ()=>{ selectedPoolCount = c; renderPoolCounts(); updateStartBar(); };
+    row.appendChild(el);
+  });
+}
+
+byId('poolScopeRow')?.addEventListener('click', (e)=>{
+  const btn = e.target.closest('.chip-btn');
+  if(!btn) return;
+  document.querySelectorAll('#poolScopeRow .chip-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  selectedPoolScope = btn.dataset.scope;
+  updateStartBar();
+});
+
+function renderExamGrid(){
+  const grid = byId('examGrid');
+  grid.innerHTML = '';
+  EXAMS.forEach(ex=>{
+    const qs = QUESTIONS.filter(q=>q.id>=ex.range[0] && q.id<=ex.range[1]);
+    const attempted = qs.filter(q=>store.stats[q.id] && store.stats[q.id].attempts>0);
+    const correct = attempted.filter(q=>store.stats[q.id].lastCorrect);
+    let progTag = '';
+    if(attempted.length === qs.length && qs.length>0){
+      const pct = Math.round((correct.length/qs.length)*100);
+      const cls = pct>=80 ? 'prog-high' : pct>=50 ? 'prog-mid' : 'prog-low';
+      progTag = `<span class="tag ${cls}">${pct}% réussite</span>`;
+    } else if(attempted.length>0){
+      progTag = `<span class="tag">${attempted.length}/${qs.length} vues</span>`;
+    } else {
+      progTag = `<span class="tag">Pas encore fait</span>`;
+    }
+    const card = document.createElement('div');
+    card.className = 'pick-card' + (selectedExam===ex.id ? ' selected':'');
+    card.innerHTML = `<h4>${ex.name}</h4><p>${ex.desc}</p><div class="meta">
+      <span class="tag">${qs.length} questions</span>${progTag}</div>`;
+    card.onclick = ()=>{ selectedExam = ex.id; renderExamGrid(); updateStartBar(); };
+    grid.appendChild(card);
+  });
+}
+
+function themeDescriptions(){
+  return {
+    "Système & Réseau":"Réglages de base, admin, Security Fabric",
+    "Logs & Monitoring":"Journalisation et supervision",
+    "Politiques de pare-feu & NAT":"Policies, NAT, IP pools, VIP",
+    "Routing":"Routes statiques, ECMP, RPF",
+    "Authentification pare-feu":"RADIUS, LDAP, authentification active",
+    "Fortinet Single Sign-On (FSSO)":"Collector agent, DC agent, modes",
+    "Certificats & Inspection SSL":"Certificats, SSL/SSH inspection, SNI",
+    "Antivirus":"Antivirus flow-based vs proxy-based",
+    "Filtrage Web":"Catégories FortiGuard, overrides, quotas",
+    "IPS & Contrôle d'application":"Signatures IPS, App Control, overrides",
+    "VPN IPsec/SSL":"IPsec phase 1/2, SSL VPN, dépannage VPN",
+    "SD-WAN":"Zones, règles, SLA de performance",
+    "Haute disponibilité (HA)":"Élection, override, synchronisation",
+    "Diagnostics & Dépannage":"Conserve mode, diagnose, debug flow",
+    "FortiGate in the Cloud":"FortiGate VM et FortiGate CNF",
+    "FortiSASE":"Cas d'usage FortiSASE"
+  };
+}
+
+function renderThemeGrid(){
+  const grid = byId('themeGrid');
+  grid.innerHTML = '';
+  const desc = themeDescriptions();
+  THEME_ORDER.forEach(theme=>{
+    const qs = QUESTIONS.filter(q=>q.theme===theme);
+    if(qs.length===0) return;
+    const attempted = qs.filter(q=>store.stats[q.id] && store.stats[q.id].attempts>0);
+    const correct = attempted.filter(q=>store.stats[q.id].lastCorrect);
+    let progTag = '';
+    if(attempted.length>0){
+      const pct = Math.round((correct.length/attempted.length)*100);
+      const cls = pct>=80 ? 'prog-high' : pct>=50 ? 'prog-mid' : 'prog-low';
+      progTag = `<span class="tag ${cls}">${pct}%</span>`;
+    }
+    const card = document.createElement('div');
+    card.className = 'pick-card' + (selectedThemes.has(theme) ? ' selected':'');
+    card.innerHTML = `<h4>${theme}</h4><p>${desc[theme]||''}</p>
+      <div class="meta"><span class="tag">${qs.length} questions</span>${progTag}</div>`;
+    card.onclick = ()=>{
+      if(selectedThemes.has(theme)) selectedThemes.delete(theme);
+      else selectedThemes.add(theme);
+      renderThemeGrid(); updateStartBar();
+    };
+    grid.appendChild(card);
+  });
+}
+
+function updateStartBar(){
+  const summary = byId('startSummary');
+  const startBtn = byId('startBtn');
+  let n = 0, label = '';
+  if(selectedMode==='pool'){
+    let pool = QUESTIONS;
+    if(selectedPoolScope==='missed') pool = QUESTIONS.filter(q=>isMissed(q.id));
+    else if(selectedPoolScope==='flagged') pool = QUESTIONS.filter(q=>store.flagged[q.id]);
+    n = Math.min(selectedPoolCount, pool.length);
+    label = `Session aléatoire — <b>${n}</b> question${n>1?'s':''} ${selectedPoolScope==='all'?'sur toute la banque':selectedPoolScope==='missed'?'parmi tes erreurs':'parmi tes questions marquées'}.`;
+    if(pool.length===0){ label = `Aucune question disponible pour cette portée pour l'instant.`; }
+  } else if(selectedMode==='exam'){
+    if(selectedExam){
+      const ex = EXAMS.find(e=>e.id===selectedExam);
+      n = ex.range[1]-ex.range[0]+1;
+      label = `<b>${ex.name}</b> sélectionné — ${n} questions, dans l'ordre officiel.`;
+    } else {
+      label = 'Choisis un examen blanc ci-dessus.';
+    }
+  } else if(selectedMode==='theme'){
+    const pool = QUESTIONS.filter(q=>selectedThemes.has(q.theme));
+    n = pool.length;
+    if(selectedThemes.size===0){ label = 'Sélectionne au moins un thème ci-dessus.'; }
+    else{ label = `<b>${n}</b> question${n>1?'s':''} sur ${selectedThemes.size} thème${selectedThemes.size>1?'s':''} sélectionné${selectedThemes.size>1?'s':''}.`; }
+  }
+  summary.innerHTML = label + (n>0 ? ` <span class="mono" style="color:var(--text-faint); font-size:12px;">— ${sessionType==='real' ? 'Examen réel · '+Math.round(n)+' min chrono' : 'Mode étude'}</span>` : '');
+  startBtn.disabled = n===0;
+}
+
+document.querySelectorAll('.mode-tab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    document.querySelectorAll('.mode-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.mode-panel').forEach(p=>p.classList.remove('active'));
+    tab.classList.add('active');
+    selectedMode = tab.dataset.mode;
+    byId('panel-'+selectedMode).classList.add('active');
+    updateStartBar();
+  });
+});
+
+document.querySelectorAll('.stype-card').forEach(card=>{
+  card.addEventListener('click', ()=>{
+    document.querySelectorAll('.stype-card').forEach(c=>c.classList.remove('active'));
+    card.classList.add('active');
+    sessionType = card.dataset.stype;
+    updateStartBar();
+  });
+});
+
+byId('quickSimBtn').addEventListener('click', ()=>{
+  const n = Math.min(50, QUESTIONS.length);
+  const pool = shuffle(QUESTIONS).slice(0, n);
+  startQuiz(pool, 'Simulation d\'examen complète', 'real', n*60000);
+});
+
+byId('startBtn').addEventListener('click', ()=>{
+  let pool = [];
+  let label = '';
+  if(selectedMode==='pool'){
+    let base = QUESTIONS;
+    if(selectedPoolScope==='missed') base = QUESTIONS.filter(q=>isMissed(q.id));
+    else if(selectedPoolScope==='flagged') base = QUESTIONS.filter(q=>store.flagged[q.id]);
+    pool = weightedSample(base, selectedPoolCount);
+    label = 'Pool aléatoire';
+  } else if(selectedMode==='exam'){
+    if(!selectedExam) return;
+    const ex = EXAMS.find(e=>e.id===selectedExam);
+    pool = QUESTIONS.filter(q=>q.id>=ex.range[0] && q.id<=ex.range[1]);
+    label = ex.name;
+  } else if(selectedMode==='theme'){
+    if(selectedThemes.size===0) return;
+    pool = shuffle(QUESTIONS.filter(q=>selectedThemes.has(q.theme)));
+    label = Array.from(selectedThemes).map(t=>THEME_SHORT[t]).join(' + ');
+  }
+  if(pool.length===0){ showToast("Aucune question à afficher pour cette sélection."); return; }
+  const budget = sessionType==='real' ? pool.length*60000 : null;
+  startQuiz(pool, label, sessionType, budget);
+});
+
+/* ============================================================
+   QUIZ LOGIC
+   ============================================================ */
+let session = null;
+let timerInterval = null;
+
+function startQuiz(questions, label, mode, timeBudgetMs, returnView){
+  session = {
+    questions, label,
+    mode: mode || 'study',
+    timeBudgetMs: timeBudgetMs || null,
+    returnView: returnView || 'home',
+    startedAt: Date.now(),
+    questionEnterTime: null,
+    perQuestionTimeMs: {},
+    domainTimeMs: {},
+    index: 0,
+    picks: {},      // qid -> Set of chosen letters
+    submitted: {},  // qid -> bool (study mode only)
+    correctMap: {}  // qid -> bool
+  };
+  showView('quiz');
+  byId('timerBlock').style.display = '';
+  byId('timerLbl').textContent = session.mode==='real' ? 'Temps restant' : 'Temps écoulé';
+  renderQuiz();
+  enterQuestion();
+  startTimer();
+}
+
+function enterQuestion(){
+  if(!session || session.reviewOnly) return;
+  session.questionEnterTime = Date.now();
+}
+function leaveQuestion(){
+  if(!session || session.questionEnterTime==null) return;
+  const q = session.questions[session.index];
+  const elapsed = Date.now() - session.questionEnterTime;
+  session.perQuestionTimeMs[q.id] = (session.perQuestionTimeMs[q.id]||0) + elapsed;
+  session.domainTimeMs[q.theme] = (session.domainTimeMs[q.theme]||0) + elapsed;
+  recordTime(q.id, elapsed);
+  session.questionEnterTime = null;
+}
+function goToIndex(newIndex){
+  leaveQuestion();
+  session.index = newIndex;
+  renderQuiz();
+  enterQuestion();
+}
+
+function startTimer(){
+  clearInterval(timerInterval);
+  updateTimerDisplay();
+  timerInterval = setInterval(updateTimerDisplay, 1000);
+}
+function stopTimer(){ clearInterval(timerInterval); timerInterval = null; }
+function updateTimerDisplay(){
+  const el = byId('timerDisplay');
+  if(!el || !session) return;
+  const elapsedMs = Date.now() - session.startedAt;
+  if(session.mode==='real' && session.timeBudgetMs){
+    const remainMs = session.timeBudgetMs - elapsedMs;
+    if(remainMs<=0){
+      el.textContent = '00:00';
+      el.classList.add('time-critical');
+      stopTimer();
+      showToast("Temps écoulé — session terminée automatiquement.");
+      finishQuiz();
+      return;
+    }
+    el.textContent = formatMs(remainMs);
+    el.classList.toggle('time-critical', remainMs < 5*60*1000);
+  } else {
+    el.textContent = formatMs(elapsedMs);
+    el.classList.remove('time-critical');
+  }
+}
+
+function renderProgressTrack(){
+  const track = byId('progressTrack');
+  track.innerHTML = '';
+  const isReal = session.mode==='real';
+  session.questions.forEach((q,i)=>{
+    const seg = document.createElement('div');
+    seg.className = 'progress-seg';
+    if(i===session.index) seg.className += ' current';
+    else if(isReal){
+      if(session.picks[q.id] && session.picks[q.id].size>0) seg.className += ' done';
+    } else if(session.submitted[q.id]){
+      seg.className += session.correctMap[q.id] ? ' correct' : ' wrong';
+    }
+    track.appendChild(seg);
+  });
+  byId('quizModeLabel').textContent = session.label + (isReal ? ' · Examen réel' : '');
+  byId('quizProgressLabel').textContent = `Question ${session.index+1} / ${session.questions.length}`;
+
+  // domain time chips (only meaningful once some time has passed)
+  const dtRow = byId('domainTimeRow');
+  const entries = Object.entries(session.domainTimeMs||{}).filter(([,ms])=>ms>1000);
+  if(entries.length===0){ dtRow.innerHTML=''; }
+  else{
+    dtRow.innerHTML = entries.map(([theme,ms])=>`<span class="domain-time-chip">${THEME_SHORT[theme]||theme} <b>${formatSecShort(ms)}</b></span>`).join('');
+  }
+}
+
+function renderQuiz(){
+  const q = session.questions[session.index];
+  renderProgressTrack();
+  const card = byId('qcard');
+  const isReal = session.mode==='real';
+  const submitted = !isReal && !!session.submitted[q.id]; // reveal only ever happens in study mode
+  const picks = session.picks[q.id] || new Set();
+  const flagged = !!store.flagged[q.id];
+
+  let imagesHtml = '';
+  if(q.images && q.images.length){
+    imagesHtml = '<div class="exhibit-block">' + q.images.map((src,i)=>`
+      <img class="exhibit-img" data-src="${src}" src="${src}" alt="Exhibit ${i+1}" style="${i>0?'margin-top:10px;':''}">
+    `).join('') + `<div class="exhibit-cap">Exhibit${q.images.length>1?'s':''} — cliquer pour agrandir</div></div>`;
+  }
+
+  let choicesHtml = '<div class="choices">';
+  const letters = Object.keys(q.choices);
+  letters.forEach(letter=>{
+    let cls = 'choice' + (q.multi ? '' : ' radio-type');
+    const isPicked = picks.has(letter);
+    if(isPicked && !submitted) cls += ' picked';
+    if(submitted){
+      cls += ' locked';
+      const isCorrect = q.correct.includes(letter);
+      if(isCorrect && isPicked) cls += ' reveal-correct';
+      else if(isCorrect && !isPicked) cls += ' reveal-missed';
+      else if(!isCorrect && isPicked) cls += ' reveal-wrong';
+    }
+    choicesHtml += `<div class="${cls}" data-letter="${letter}">
+      <div class="mark">${submitted ? (q.correct.includes(letter)?'✓':(isPicked?'✕':letter)) : (isPicked ? '✓' : letter)}</div>
+      <div class="ctext">${q.choices[letter]}</div>
+    </div>`;
+  });
+  choicesHtml += '</div>';
+
+  let explainHtml = '';
+  if(submitted){
+    const ok = session.correctMap[q.id];
+    explainHtml = `<div class="explain-box">
+      <div class="explain-head ${ok?'ok':'ko'}">
+        ${ok ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Bonne réponse'
+             : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 6 6 18M6 6l12 12"/></svg> ' + (picks.size===0 ? 'Question non répondue' : 'Ce n\'est pas ça')}
+      </div>
+      <div class="explain-body">${q.explanation}</div>
+      <div class="explain-answer">Réponse correcte : ${q.correct.join(', ')}</div>
+    </div>`;
+  }
+
+  const footerNote = session.reviewOnly ? 'Revue de session — tes réponses sont affichées avec la correction.' : isReal
+    ? (q.multi ? `Choix multiple — ${picks.size}/${q.correct.length} sélectionnée${q.correct.length>1?'s':''} — aucune correction avant la fin de l'examen.` : 'Aucune correction avant la fin de l\'examen.')
+    : (q.multi ? `Sélectionne exactement ${q.correct.length} réponse${q.correct.length>1?'s':''} (${picks.size}/${q.correct.length}).` : 'Sélectionne une réponse.');
+
+  card.innerHTML = `
+    <div class="qcard-top">
+      <div class="qcard-tags">
+        <span class="qnum">Q${q.id}</span>
+        <span class="theme-pill">${q.theme}</span>
+        ${q.multi ? '<span class="theme-pill">Choix multiple</span>':''}
+      </div>
+      <button class="flag-btn ${flagged?'flagged':''}" id="flagBtn">
+        <svg viewBox="0 0 24 24" fill="${flagged?'currentColor':'none'}" stroke="currentColor" stroke-width="2"><path d="M5 3v18M5 4h11l-2.5 4L16 12H5"/></svg>
+        ${flagged ? 'Marquée' : 'Marquer'}
+      </button>
+    </div>
+    <div class="qtext">${q.question}</div>
+    ${imagesHtml}
+    ${choicesHtml}
+    <div class="qfooter">
+      <div class="multi-note">${footerNote}</div>
+      ${(!isReal && !submitted) ? '<button class="btn btn-primary" id="submitBtn" disabled>Valider</button>' : ''}
+    </div>
+    ${explainHtml}
+  `;
+
+  // wire choice clicks — interactive whenever not "submitted" (real mode is never locked mid-flight)
+  if(!submitted){
+    card.querySelectorAll('.choice').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        const letter = el.dataset.letter;
+        const cur = session.picks[q.id] || new Set();
+        if(q.multi){
+          if(cur.has(letter)){
+            cur.delete(letter);
+          } else {
+            if(cur.size >= q.correct.length){
+              showToast(`Tu ne peux sélectionner que ${q.correct.length} réponse${q.correct.length>1?'s':''} pour cette question. Décoche-en une pour en choisir une autre.`);
+              return;
+            }
+            cur.add(letter);
+          }
+        } else {
+          cur.clear(); cur.add(letter);
+        }
+        session.picks[q.id] = cur;
+        renderQuiz();
+      });
+    });
+    const submitBtn = byId('submitBtn');
+    if(submitBtn){
+      submitBtn.disabled = picks.size===0;
+      submitBtn.addEventListener('click', submitAnswer);
+    }
+  }
+
+  byId('flagBtn').addEventListener('click', ()=>{
+    toggleFlag(q.id);
+    renderQuiz();
+  });
+
+  card.querySelectorAll('.exhibit-img').forEach(img=>{
+    img.addEventListener('click', ()=>{
+      byId('lightboxImg').src = img.dataset.src;
+      byId('lightbox').classList.add('active');
+    });
+  });
+
+  // nav buttons
+  byId('prevBtn').style.visibility = session.index===0 ? 'hidden' : 'visible';
+  const isLast = session.index === session.questions.length-1;
+  if(session.reviewOnly){
+    byId('nextBtn').textContent = isLast ? 'Terminer la revue →' : 'Suivante →';
+  } else if(isReal){
+    byId('nextBtn').textContent = isLast ? 'Terminer l\'examen →' : 'Suivante →';
+  } else {
+    byId('nextBtn').textContent = isLast ? 'Voir les résultats →' : 'Passer →';
+  }
+  byId('quizFooterNav').style.display = 'flex';
+}
+
+function submitAnswer(){
+  const q = session.questions[session.index];
+  const picks = session.picks[q.id] || new Set();
+  const required = q.correct.length;
+  if(picks.size !== required){
+    showToast(`Cette question nécessite exactement ${required} réponse${required>1?'s':''} — tu en as sélectionné ${picks.size}. Complète ta sélection avant de valider.`);
+    return;
+  }
+  const correctSet = new Set(q.correct);
+  const isCorrect = picks.size===correctSet.size && [...picks].every(l=>correctSet.has(l));
+  session.submitted[q.id] = true;
+  session.correctMap[q.id] = isCorrect;
+  recordAnswer(q.id, isCorrect);
+  recordAnswerTime(q.id, (session.perQuestionTimeMs[q.id]||0) + (session.questionEnterTime ? Date.now()-session.questionEnterTime : 0));
+  renderQuiz();
+}
+
+byId('prevBtn').addEventListener('click', ()=>{
+  if(session.index>0){ goToIndex(session.index-1); }
+});
+byId('nextBtn').addEventListener('click', ()=>{
+  if(session.index < session.questions.length-1){
+    goToIndex(session.index+1);
+  } else if(session.reviewOnly){
+    exitReview();
+  } else {
+    finishQuiz();
+  }
+});
+byId('quitBtn').addEventListener('click', ()=>{
+  if(session.reviewOnly){ exitReview(); return; }
+  const msg = session.mode==='real'
+    ? 'Quitter cet examen chronométré ? Aucun résultat ne sera enregistré pour cette tentative.'
+    : 'Quitter la session en cours ? Ta progression sur les questions déjà validées est conservée.';
+  if(confirm(msg)){
+    stopTimer();
+    leaveQuestion();
+    if(session.returnView==='coach'){
+      openCoach();
+    } else if(session.returnView==='stats'){
+      openStats();
+    } else {
+      showView('home');
+      renderHome();
+    }
+  }
+});
+
+function finishQuiz(){
+  stopTimer();
+  leaveQuestion();
+
+  const isReal = session.mode==='real';
+  // In real mode, correctness was never computed during navigation — compute it now for every question.
+  if(isReal){
+    session.questions.forEach(q=>{
+      const picks = session.picks[q.id] || new Set();
+      const correctSet = new Set(q.correct);
+      const isCorrect = picks.size===correctSet.size && [...picks].every(l=>correctSet.has(l));
+      session.correctMap[q.id] = isCorrect;
+      recordAnswer(q.id, isCorrect, picks.size>0);
+      if(picks.size>0) recordAnswerTime(q.id, session.perQuestionTimeMs[q.id]||0);
+    });
+  }
+
+  const total = session.questions.length;
+  let correct = 0;
+  session.questions.forEach(q=>{ if(session.correctMap[q.id]) correct++; });
+  const pct = Math.round((correct/total)*100);
+  const totalTimeMs = Date.now() - session.startedAt;
+  const avgTimeMs = totalTimeMs / total;
+
+  // Sessions d'une seule question (ex. une question ouverte depuis le Coach) ne polluent pas l'historique.
+  if(total >= 2){
+    const picksOut = {}, correctOut = {};
+    session.questions.forEach(q=>{
+      picksOut[q.id] = [...(session.picks[q.id] || [])];
+      correctOut[q.id] = !!session.correctMap[q.id];
+    });
+    store.history.push({
+      date: Date.now(), label: session.label, mode: session.mode,
+      total, correct, pct, totalTimeMs, avgTimeMs,
+      qids: session.questions.map(q=>q.id), picks: picksOut, correctMap: correctOut
+    });
+  }
+  // keep history reasonably bounded
+  if(store.history.length > 100) store.history = store.history.slice(-100);
+  saveStore();
+
+  showView('results');
+  byId('resultsTitle').textContent = pct>=80 ? 'Excellent travail !' : pct>=50 ? 'Bonne progression' : "Continue à t'entraîner";
+  byId('resultsSub').textContent = `${session.label}${isReal ? ' (examen réel)' : ''} — ${correct} / ${total} bonnes réponses`;
+  byId('scorePct').textContent = pct+'%';
+  const circumference = 2*Math.PI*60;
+  const fg = byId('scoreRingFg');
+  fg.setAttribute('stroke-dasharray', circumference);
+  fg.style.stroke = pct>=80 ? 'var(--good)' : pct>=50 ? 'var(--warn)' : 'var(--bad)';
+  setTimeout(()=>{ fg.setAttribute('stroke-dashoffset', circumference*(1-pct/100)); }, 80);
+
+  const flaggedCount = session.questions.filter(q=>store.flagged[q.id]).length;
+  byId('resultStatsRow').innerHTML = `
+    <div class="stat-chip"><div class="num good">${correct}</div><div class="lbl">Correctes</div></div>
+    <div class="stat-chip"><div class="num bad">${total-correct}</div><div class="lbl">Incorrectes</div></div>
+    <div class="stat-chip"><div class="num">${formatMs(totalTimeMs)}</div><div class="lbl">Temps total</div></div>
+    <div class="stat-chip"><div class="num">${Math.round(avgTimeMs/1000)}s</div><div class="lbl">Temps moyen / question</div></div>
+    <div class="stat-chip"><div class="num" style="color:var(--warn)">${flaggedCount}</div><div class="lbl">Marquées</div></div>
+  `;
+
+  // ---- Domain mastery (this session) ----
+  const byDomain = computeDomainMastery(session.questions, (q)=> session.correctMap[q.id]);
+  renderDomainRows(byId('resultDomainRows'), byDomain);
+
+  const strengths = [], weaknesses = [];
+  DOMAINS.forEach(d=>{
+    const info = byDomain[d.id];
+    if(info.total===0) return;
+    const p = Math.round((info.correct/info.total)*100);
+    if(p>=85) strengths.push(d.short);
+    else if(p<60) weaknesses.push(d.short);
+  });
+  const badgeRow = byId('badgeRow');
+  badgeRow.innerHTML =
+    strengths.map(s=>`<span class="sw-badge strength">✅ ${s}</span>`).join('') +
+    weaknesses.map(w=>`<span class="sw-badge weakness">⚠ ${w}</span>`).join('');
+
+  // ---- Recommendations ----
+  const recoBox = byId('recoBox');
+  const recoList = byId('recoList');
+  const recos = [];
+  weaknesses.forEach(w=> recos.push(`Réviser le domaine <b>${w}</b>`));
+  if(total-correct>0) recos.push(`Refaire uniquement les <b>${total-correct} question${total-correct>1?'s':''} erronée${total-correct>1?'s':''}</b> de cette session`);
+  if(flaggedCount>0) recos.push(`Revoir les <b>${flaggedCount} question${flaggedCount>1?'s':''} marquée${flaggedCount>1?'s':''}</b>`);
+  if(pct>=75) recos.push(`Repasser un examen complet de ${Math.min(50,QUESTIONS.length)} questions en moins de ${Math.min(50,QUESTIONS.length)} minutes, en mode Examen réel`);
+  if(recos.length===0) recos.push("Continue sur ta lancée — refais un examen blanc complet pour consolider.");
+  if(weaknesses.length>0 || total-correct>0 || flaggedCount>0 || pct>=75){
+    recoBox.style.display = 'block';
+    recoList.innerHTML = recos.map((r,i)=>`<li><span class="reco-num">${i+1}</span><span>${r}</span></li>`).join('');
+  } else {
+    recoBox.style.display = 'none';
+  }
+
+  // ---- Theme breakdown (granular, kept below domains) ----
+  const byTheme = {};
+  session.questions.forEach(q=>{
+    byTheme[q.theme] = byTheme[q.theme] || {c:0,t:0};
+    byTheme[q.theme].t++;
+    if(session.correctMap[q.id]) byTheme[q.theme].c++;
+  });
+  const tb = byId('themeBreakdown');
+  tb.innerHTML = '';
+  Object.keys(byTheme).sort().forEach(theme=>{
+    const d = byTheme[theme];
+    const p = Math.round((d.c/d.t)*100);
+    tb.innerHTML += `<div class="tb-row">
+      <div class="tb-name">${theme}</div>
+      <div class="tb-bar-wrap"><div class="tb-bar" style="width:${p}%; background:${p>=80?'var(--good)':p>=50?'var(--warn)':'var(--bad)'}"></div></div>
+      <div class="tb-pct">${d.c}/${d.t}</div>
+    </div>`;
+  });
+
+  // ---- Progression history sparkline (last 8 sessions) ----
+  const histBlock = byId('historyBlock');
+  const histRow = byId('historyRow');
+  const recentHist = store.history.slice(-8);
+  if(recentHist.length>=2){
+    histBlock.style.display = 'block';
+    histRow.innerHTML = recentHist.map(h=>{
+      const d = new Date(h.date);
+      const lbl = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}`;
+      const color = h.pct>=80 ? 'var(--good)' : h.pct>=50 ? 'var(--warn)' : 'var(--bad)';
+      return `<div class="history-bar-wrap">
+        <div class="history-bar" style="height:${Math.max(4,h.pct)}%; background:${color};" title="${h.pct}%"></div>
+        <div class="history-lbl">${lbl}</div>
+      </div>`;
+    }).join('');
+  } else {
+    histBlock.style.display = 'none';
+  }
+
+  // ---- Review list (wrong answers) ----
+  const wrong = session.questions.filter(q=>!session.correctMap[q.id]);
+  const rl = byId('reviewList');
+  if(wrong.length===0){
+    rl.innerHTML = `<div class="empty-state">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 6 9 17l-5-5"/></svg>
+      <div>Aucune erreur sur cette session. Bravo !</div>
+    </div>`;
+  } else {
+    rl.innerHTML = '<span class="opt-label" style="margin-top:10px; display:block;">Questions à revoir</span>' + wrong.map(q=>`
+      <div class="review-item" data-qid="${q.id}">
+        <div class="rhead">
+          <svg class="ricon ko" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+          <div class="rq">Q${q.id} — ${q.question.split('\n')[0].slice(0,110)}${q.question.length>110?'…':''}</div>
+          <span class="theme-pill">${THEME_SHORT[q.theme]||''}</span>
+        </div>
+      </div>
+    `).join('');
+    rl.querySelectorAll('.review-item').forEach(el=>{
+      el.addEventListener('click', ()=>{
+        const qid = parseInt(el.dataset.qid);
+        const idx = session.questions.findIndex(q=>q.id===qid);
+        if(idx>=0){
+          session.index = idx;
+          session.mode = 'study';
+          session.submitted[qid] = true;
+          showView('quiz');
+          renderQuiz();
+        }
+      });
+    });
+  }
+
+  window._lastSession = session;
+}
+
+byId('backHomeBtn').addEventListener('click', ()=>{ showView('home'); renderHome(); });
+byId('retryBtn').addEventListener('click', ()=>{
+  const s = window._lastSession;
+  if(!s) return;
+  const budget = s.mode==='real' ? s.questions.length*60000 : null;
+  startQuiz(shuffle(s.questions), s.label, s.mode, budget);
+});
+byId('reviewMissedBtn').addEventListener('click', ()=>{
+  const s = window._lastSession;
+  if(!s) return;
+  const wrong = s.questions.filter(q=>!s.correctMap[q.id]);
+  if(wrong.length===0){ showToast('Aucune erreur à revoir sur cette session.'); return; }
+  startQuiz(wrong, 'Révision des erreurs', 'study', null);
+});
+
+byId('brandHome').addEventListener('click', ()=>{ showView('home'); renderHome(); });
+byId('lightboxClose').addEventListener('click', ()=>byId('lightbox').classList.remove('active'));
+byId('lightbox').addEventListener('click', (e)=>{ if(e.target.id==='lightbox') byId('lightbox').classList.remove('active'); });
+document.addEventListener('keydown', (e)=>{
+  if(e.key==='Escape'){
+    byId('lightbox').classList.remove('active');
+    byId('methodModal').classList.remove('active');
+    byId('backupModal').classList.remove('active');
+    byId('themeModal').classList.remove('active');
+  }
+});
+
+/* ============================================================
+   METHODOLOGY MODAL (static reference — exhibit reading checklist)
+   ============================================================ */
+const METHOD_CHECKLIST = [
+  "IP Address","Subnet","Gateway","VIP","SNAT","Rule ID","Policy ID","Member","Priority","Override",
+  "Master / Primary / Secondary","Selected","Status (Enable/Disable)","Certificate CN","Certificate SAN",
+  "SSL Mode","DPD","SLA Status","Latency","Jitter","Packet Loss","Route Distance","Priority Route","ECMP",
+  "FSSO User","Collector Agent","Conserve Mode","CPU","Memory","Debug Flow"
+];
+const METHOD_TRAPS = [
+  {code:"override enabled", desc:"Change complètement la logique d'élection HA — la priorité prime sur l'uptime dès que ce flag est actif."},
+  {code:"policy id 0", desc:"C'est l'ID de la politique implicite de refus (implicit deny), pas une politique explicite créée par l'administrateur."},
+  {code:"selected = yes", desc:"Indique la route ou l'entrée réellement active dans la table — les autres lignes similaires sont ignorées par le moteur de routage."},
+  {code:"status = disable", desc:"Un objet ou une interface désactivée invalide souvent une réponse qui semblait techniquement correcte sur le papier."},
+  {code:"priority = 255", desc:"Valeur souvent utilisée comme priorité la plus basse (ou distinctive) dans les tables de routage/SD-WAN — vérifie toujours le sens (plus petit = meilleur, sauf mention contraire)."},
+  {code:"phase2 mismatch", desc:"Repère les couples (chiffrement/authentification, sous-réseaux locaux/distants) entre les deux extrémités IPsec — un seul champ différent suffit à bloquer la phase 2."},
+  {code:"dpd mode", desc:"On-Idle vs On-Demand vs Disabled changent complètement le comportement — relis toujours la condition exacte de déclenchement demandée dans l'énoncé."},
+  {code:"memory conserve mode", desc:"Le franchissement d'un seuil mémoire (souvent 88%) bloque les changements de config, indépendamment de ce que montre le reste de la capture."},
+];
+function renderMethodModal(){
+  byId('methodChecklistChips').innerHTML = METHOD_CHECKLIST.map(c=>`<span class="method-chip">${c}</span>`).join('');
+  byId('methodTrapList').innerHTML = METHOD_TRAPS.map(t=>`<div class="trap-item"><div class="tcode">${t.code}</div><div class="tdesc">${t.desc}</div></div>`).join('');
+}
+byId('methodBtn').addEventListener('click', ()=>{
+  renderMethodModal();
+  byId('methodModal').classList.add('active');
+});
+byId('methodCloseBtn').addEventListener('click', ()=>byId('methodModal').classList.remove('active'));
+byId('methodModal').addEventListener('click', (e)=>{ if(e.target.id==='methodModal') byId('methodModal').classList.remove('active'); });
+
+byId('backupBtn').addEventListener('click', ()=>{ byId('backupModal').classList.add('active'); });
+byId('backupCloseBtn').addEventListener('click', ()=>byId('backupModal').classList.remove('active'));
+byId('backupModal').addEventListener('click', (e)=>{ if(e.target.id==='backupModal') byId('backupModal').classList.remove('active'); });
+byId('exportBtn').addEventListener('click', exportStore);
+byId('importBtn').addEventListener('click', ()=>byId('importFileInput').click());
+byId('importFileInput').addEventListener('change', (e)=>{
+  const file = e.target.files && e.target.files[0];
+  importStoreFromFile(file);
+  e.target.value = '';
+});
+
+byId('resetBtn').addEventListener('click', ()=>{
+  if(confirm('Réinitialiser toute ta progression (scores, questions marquées, historique) ? Cette action est irréversible.')){
+    const keepLook = {theme: store.settings.theme, accent: store.settings.accent};
+    localStorage.removeItem(STORE_KEY);
+    store = loadStore();
+    if(keepLook.theme) store.settings.theme = keepLook.theme;
+    if(keepLook.accent) store.settings.accent = keepLook.accent;
+    saveStore();
+    applyAppearance(store.settings);
+    byId('backupModal').classList.remove('active');
+    renderHome();
+    showToast('Progression réinitialisée.');
+  }
+});
+
+byId('statsBtn').addEventListener('click', openStats);
+
+/* ============================================================
+   COACH FCP FORTIGATE — module logic
+   ============================================================ */
+let coachSelectedDomain = 'd1';
+
+function getDomainQuestions(domainId){
+  return QUESTIONS.filter(q=>{
+    const d = themeToDomain(q.theme);
+    return d && d.id===domainId;
+  });
+}
+
+function getDomainWeakThemes(domainId){
+  const domain = DOMAINS.find(d=>d.id===domainId);
+  const rows = [];
+  domain.themes.forEach(theme=>{
+    const qs = QUESTIONS.filter(q=>q.theme===theme);
+    let attempted=0, correct=0;
+    qs.forEach(q=>{
+      const s = store.stats[q.id];
+      if(s && s.attempts>0){ attempted++; if(s.lastCorrect) correct++; }
+    });
+    if(attempted>0){
+      const pct = Math.round((correct/attempted)*100);
+      rows.push({theme, pct, attempted});
+    }
+  });
+  return rows;
+}
+
+function renderCoachDomainTabs(){
+  const wrap = byId('coachDomainTabs');
+  wrap.innerHTML = DOMAINS.map(d=>`
+    <div class="mode-tab ${d.id===coachSelectedDomain?'active':''}" data-domain="${d.id}">
+      ${d.short}${d.id==='d3' ? ' <span class="coach-star" style="margin-left:6px;">★ le plus important</span>' : ''}
+    </div>
+  `).join('');
+  wrap.querySelectorAll('.mode-tab').forEach(tab=>{
+    tab.addEventListener('click', ()=>{
+      coachSelectedDomain = tab.dataset.domain;
+      renderCoachDomainTabs();
+      renderCoachPanel(coachSelectedDomain);
+    });
+  });
+}
+
+function renderCoachPanel(domainId){
+  const domain = DOMAINS.find(d=>d.id===domainId);
+  const content = COACH_CONTENT[domainId];
+  const qs = getDomainQuestions(domainId);
+
+  // mastery for this domain (global, all-time)
+  let attempted=0, correct=0;
+  qs.forEach(q=>{
+    const s = store.stats[q.id];
+    if(s && s.attempts>0){ attempted++; if(s.lastCorrect) correct++; }
+  });
+  const pct = attempted>0 ? Math.round((correct/attempted)*100) : null;
+  const color = pct!==null ? domainColor(pct) : 'var(--border)';
+
+  const weakThemes = getDomainWeakThemes(domainId).filter(r=>r.pct<60);
+
+  const panel = byId('coachDomainPanel');
+  panel.innerHTML = `
+    <div class="coach-panel">
+      <div class="coach-panel-head">
+        <div>
+          <div class="coach-panel-title">${domain.name}</div>
+          <div class="coach-panel-weight">Poids à l'examen : ${domain.weight}</div>
+        </div>
+        ${domainId==='d3' ? '<span class="coach-star">★ Domaine le plus dense — priorité de révision</span>' : ''}
+      </div>
+      <p style="color:var(--text-dim); font-size:13.5px; margin:10px 0 0;">${content.intro}</p>
+
+      <div class="coach-mastery-block">
+        <div class="coach-mastery-label">
+          <span>Maîtrise du domaine ${pct!==null ? '('+attempted+' question'+(attempted>1?'s':'')+' déjà vue'+(attempted>1?'s':'')+')' : '(pas encore de données)'}</span>
+          <span style="color:${color}; font-weight:700;">${pct!==null ? pct+'%' : '—'}</span>
+        </div>
+        <div class="dm-bar-wrap"><div class="dm-bar" style="width:${pct||0}%; background:${color};"></div></div>
+        ${weakThemes.length>0 ? `
+          <div style="margin-top:14px;">
+            <div style="font-family:var(--font-label); font-size:11px; color:var(--bad); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:8px;">🔥 Faiblesses identifiées</div>
+            <div class="badge-row" style="margin-top:0;">
+              ${weakThemes.map(w=>`<span class="sw-badge weakness">⚠ ${w.theme} (${w.pct}%)</span>`).join('')}
+            </div>
+          </div>
+          <div style="margin-top:14px;">
+            <div style="font-family:var(--font-label); font-size:11px; color:var(--accent); text-transform:uppercase; letter-spacing:0.04em; margin-bottom:8px;">📖 Recommandation de révision</div>
+            <div style="font-size:13px; color:var(--text-dim);">Revoir en priorité : ${weakThemes.map(w=>w.theme).join(', ')}.</div>
+          </div>
+        ` : (pct!==null ? `<div style="margin-top:12px; font-size:12.5px; color:var(--good);">✅ Pas de faiblesse détectée sur ce domaine pour l'instant.</div>` : '')}
+      </div>
+
+      <div class="coach-section">
+        <h4><span class="n">01</span> Concepts à connaître</h4>
+        <div class="concept-grid">
+          ${content.concepts.map(c=>`<div class="concept-item">${c}</div>`).join('')}
+        </div>
+      </div>
+
+      <div class="coach-section">
+        <h4><span class="n">02</span> Pièges d'examen classiques</h4>
+        <div class="trap-list">
+          ${content.traps.map(t=>`<div class="trap-item"><div class="tcode">⚠ ${t.code}</div><div class="tdesc">${t.desc}</div></div>`).join('')}
+        </div>
+      </div>
+
+      <div class="coach-section">
+        <h4><span class="n">03</span> Ce qu'il faut reconnaître dans les exhibits</h4>
+        <div class="method-chips">
+          ${content.exhibits.map(e=>`<span class="method-chip">${e}</span>`).join('')}
+        </div>
+      </div>
+
+      <div class="coach-section">
+        <h4><span class="n">04</span> Commandes CLI importantes</h4>
+        <div class="cli-box">
+          ${content.commands.map(c=>`<div class="cli-line">${c}</div>`).join('')}
+        </div>
+      </div>
+
+      <div class="coach-section">
+        <h4><span class="n">05</span> Questions associées de la banque (${qs.length})</h4>
+        <div class="assoc-questions">
+          ${qs.map(q=>{
+            const s = store.stats[q.id];
+            let cls = '';
+            if(s && s.attempts>0) cls = s.lastCorrect ? 'q-good' : 'q-wrong';
+            return `<span class="q-chip ${cls}" data-qid="${q.id}">Q${q.id}</span>`;
+          }).join('')}
+        </div>
+        <div class="coach-actions">
+          <button class="btn btn-primary btn-sm" id="coachReviseDomainBtn">✅ Réviser ce domaine uniquement (${qs.length} questions)</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  panel.querySelectorAll('.q-chip').forEach(chip=>{
+    chip.addEventListener('click', ()=>{
+      const qid = parseInt(chip.dataset.qid);
+      const q = QUESTIONS.find(qq=>qq.id===qid);
+      if(q) startQuiz([q], `Coach — Question ${qid}`, 'study', null, 'coach');
+    });
+  });
+  byId('coachReviseDomainBtn').addEventListener('click', ()=>{
+    if(qs.length===0) return;
+    startQuiz(shuffle(qs), `Coach — ${domain.short}`, 'study', null, 'coach');
+  });
+}
+
+function openCoach(){
+  showView('coach');
+  renderCoachDomainTabs();
+  renderCoachPanel(coachSelectedDomain);
+}
+byId('coachNavBtn').addEventListener('click', openCoach);
+byId('coachCtaBtn').addEventListener('click', openCoach);
+
+/* ============================================================
+   HISTORIQUE DES EXAMENS
+   ============================================================ */
+function escHtml(s){
+  return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function fmtDateTime(ts){
+  const d = new Date(ts); const p = n=>String(n).padStart(2,'0');
+  return `${p(d.getDate())}/${p(d.getMonth()+1)}/${d.getFullYear()} · ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+function historyScoreColor(pct){
+  return pct>=80 ? 'var(--good)' : pct>=50 ? 'var(--warn)' : 'var(--bad)';
+}
+function renderHistoryList(container, limit){
+  const all = store.history.map((h,i)=>({h,i})).reverse();   // plus récent en premier
+  const shown = limit ? all.slice(0, limit) : all;
+  if(shown.length===0){
+    container.innerHTML = '<div class="hist-empty">Aucune session terminée pour l\'instant.<br>Ton historique apparaîtra ici dès que tu auras fini ta première série de questions.</div>';
+    return;
+  }
+  container.innerHTML =
+    '<div class="hist-cols"><span>Examen</span><span class="mode">Mode</span><span class="r">Score</span><span class="r">Action</span></div>' +
+    shown.map(({h,i})=>{
+      const isReal = h.mode==='real';
+      const hasDetail = Array.isArray(h.qids) && h.qids.length>0;
+      const dur = h.totalTimeMs ? ' · ' + formatMs(h.totalTimeMs) : '';
+      return `<div class="hist-row">
+        <div class="hist-exam">
+          <div class="hist-name" title="${escHtml(h.label)}">${escHtml(h.label)}</div>
+          <div class="hist-sub">${fmtDateTime(h.date)} · ${h.correct}/${h.total}${dur}<span class="hist-mode-inline"> · ${isReal?'Examen':'Étude'}</span></div>
+        </div>
+        <div class="hist-mode ${isReal?'real':''}">${isReal?'Examen réel':'Étude'}</div>
+        <div class="hist-score" style="color:${historyScoreColor(h.pct)}">${h.pct}%</div>
+        <div class="hist-action">${hasDetail
+          ? `<button class="hist-review-btn" data-idx="${i}">Revoir</button>`
+          : '<span class="hist-review-off" title="Session enregistrée avant l\'ajout du détail des réponses : revue indisponible.">—</span>'}</div>
+      </div>`;
+    }).join('');
+  container.querySelectorAll('.hist-review-btn').forEach(b=>{
+    b.addEventListener('click', ()=> startReview(store.history[parseInt(b.dataset.idx)]));
+  });
+}
+
+function startReview(entry){
+  const questions = ((entry && entry.qids) || []).map(id=>QUESTIONS.find(q=>q.id===id)).filter(Boolean);
+  if(questions.length===0){ showToast("Cette session ne contient pas le détail des réponses."); return; }
+  stopTimer();
+  const picks = {}, submitted = {}, correctMap = {};
+  questions.forEach(q=>{
+    picks[q.id] = new Set((entry.picks && entry.picks[q.id]) || []);
+    submitted[q.id] = true;
+    correctMap[q.id] = !!(entry.correctMap && entry.correctMap[q.id]);
+  });
+  session = {
+    questions, label: 'Revue — ' + entry.label, mode: 'study', reviewOnly: true,
+    timeBudgetMs: null, returnView: 'history', startedAt: Date.now(),
+    questionEnterTime: null, perQuestionTimeMs: {}, domainTimeMs: {},
+    index: 0, picks, submitted, correctMap
+  };
+  showView('quiz');
+  byId('timerBlock').style.display = 'none';
+  renderQuiz();
+}
+function exitReview(){
+  const rv = session ? session.returnView : 'home';
+  byId('timerBlock').style.display = '';
+  if(rv==='history') openHistory();
+  else { showView('home'); renderHome(); }
+}
+
+function openHistory(){
+  showView('history');
+  const h = store.history;
+  const n = h.length;
+  const avg = n ? Math.round(h.reduce((a,x)=>a+x.pct,0)/n) : 0;
+  const best = n ? Math.max(...h.map(x=>x.pct)) : 0;
+  byId('historyStatsRow').innerHTML = `
+    <div class="stat-chip"><div class="num accent">${n}</div><div class="lbl">Sessions</div></div>
+    <div class="stat-chip"><div class="num">${n ? avg+'%' : '—'}</div><div class="lbl">Score moyen</div></div>
+    <div class="stat-chip"><div class="num good">${n ? best+'%' : '—'}</div><div class="lbl">Meilleur score</div></div>`;
+  renderHistoryList(byId('fullHistoryList'), 0);
+}
+byId('historyAllBtn').addEventListener('click', openHistory);
+byId('historyBackBtn').addEventListener('click', ()=>{ showView('home'); renderHome(); });
+
+/* ============================================================
+   STATISTIQUES — plan jusqu'au jour J, indice de préparation, radar,
+   progression, rythme, questions têtues
+   ============================================================ */
+const DAY_MS = 86400000;
+// Milieu des fourchettes de pondération officielles (20–25 / 20–25 / 25–30 / 10–15 / 10–15)
+const READINESS_WEIGHTS = {d1:22.5, d2:22.5, d3:27.5, d4:12.5, d5:12.5};
+const RADAR_LABELS = {d1:'Déploiement', d2:'Pare-feu & Auth', d3:'Inspection', d4:'Routing', d5:'VPN'};
+const EXAM_BUDGET_SEC = 60;       // 50 minutes / 50 questions
+let stEditingDate = false;
+
+/* ---------- dates (calendrier local, robuste au changement d'heure) ---------- */
+function startOfDay(ts){ const d = new Date(ts); d.setHours(0,0,0,0); return d.getTime(); }
+function addDays(ts, n){ const d = new Date(ts); d.setDate(d.getDate()+n); return d.getTime(); }
+function diffDays(a, b){ return Math.round((startOfDay(a) - startOfDay(b)) / DAY_MS); }   // a - b, en jours calendaires
+function keyToTs(key){ const [y,m,d] = String(key).split('-').map(Number); return new Date(y, m-1, d).getTime(); }
+function fmtLongDate(ts){
+  try{ return new Date(ts).toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long', year:'numeric'}); }
+  catch(e){ return new Date(ts).toLocaleDateString(); }
+}
+function fmtShortDate(ts){ const d = new Date(ts); const p = n=>String(n).padStart(2,'0'); return `${p(d.getDate())}/${p(d.getMonth()+1)}`; }
+function fmtHM(ts){ const d = new Date(ts); return `${String(d.getHours()).padStart(2,'0')}h${String(d.getMinutes()).padStart(2,'0')}`; }
+function toInputValue(ts){ const d = new Date(ts); const p = n=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`; }
+
+/* ---------- activité par jour (journal + repli sur l'historique des sessions) ---------- */
+function getDayMap(){
+  const map = {};
+  Object.entries(store.activity || {}).forEach(([k,v])=>{ map[k] = {q:v.q||0, c:v.c||0, ms:v.ms||0}; });
+  const fromHist = {};
+  store.history.forEach(h=>{ const k = dayKey(h.date); fromHist[k] = (fromHist[k]||0) + (h.total||0); });
+  Object.entries(fromHist).forEach(([k,q])=>{
+    if(!map[k]) map[k] = {q, c:0, ms:0};
+    else if(map[k].q < q) map[k].q = q;
+  });
+  return map;
+}
+function computeStreak(dayMap, now){
+  let cur = 0, t = now;
+  if(!((dayMap[dayKey(t)]||{}).q > 0)) t = addDays(t, -1);
+  while((dayMap[dayKey(t)]||{}).q > 0){ cur++; t = addDays(t, -1); }
+  let best = 0, run = 0, prev = null;
+  Object.keys(dayMap).filter(k=>dayMap[k].q>0).sort().forEach(k=>{
+    const ts = keyToTs(k);
+    run = (prev!==null && diffDays(ts, prev)===1) ? run+1 : 1;
+    if(run > best) best = run;
+    prev = ts;
+  });
+  return {current:cur, best};
+}
+
+/* ---------- maîtrise par domaine & indice de préparation ---------- */
+function computeDomainReadiness(){
+  const out = {};
+  DOMAINS.forEach(d=>{ out[d.id] = {domain:d, total:0, seen:0, mastered:0, pct:0}; });
+  QUESTIONS.forEach(q=>{
+    const d = themeToDomain(q.theme); if(!d) return;
+    const o = out[d.id]; o.total++;
+    const s = store.stats[q.id];
+    if(s && s.attempts>0){ o.seen++; if(s.lastCorrect) o.mastered++; }
+  });
+  Object.values(out).forEach(o=>{ o.pct = o.total ? Math.round(100*o.mastered/o.total) : 0; });
+  return out;
+}
+function getRealSims(){ return store.history.filter(h=>h.mode==='real' && h.total>=40); }
+function computeReadiness(){
+  const dom = computeDomainReadiness();
+  let wSum = 0, acc = 0;
+  DOMAINS.forEach(d=>{ const w = READINESS_WEIGHTS[d.id]; wSum += w; acc += w * dom[d.id].pct; });
+  const masteryPct = wSum ? acc/wSum : 0;
+  const sims = getRealSims();
+  const last3 = sims.slice(-3);
+  const simAvg = last3.length ? last3.reduce((a,x)=>a+x.pct,0)/last3.length : null;
+  const index = Math.round(0.7*masteryPct + 0.3*(simAvg||0));
+  // plus gros levier : domaine qui rapporte le plus de points s'il est amélioré
+  let lever = null, leverGain = -1;
+  DOMAINS.forEach(d=>{
+    const gain = READINESS_WEIGHTS[d.id] * (100 - dom[d.id].pct);
+    if(gain > leverGain){ leverGain = gain; lever = d; }
+  });
+  return {domains:dom, masteryPct:Math.round(masteryPct), simAvg:simAvg===null?null:Math.round(simAvg), simCount:sims.length, index, lever};
+}
+function readinessLabel(i){
+  return i<35 ? 'Début de parcours' : i<55 ? 'En construction' : i<70 ? 'Solide' : i<85 ? 'Presque prêt' : 'Prêt pour le jour J';
+}
+function readinessColor(i){ return i>=75 ? 'var(--good)' : i>=50 ? 'var(--warn)' : 'var(--bad)'; }
+
+/* ---------- plan jusqu'au jour J ---------- */
+function parseExamTs(){
+  const s = store.settings && store.settings.examDate;
+  const t = s ? new Date(s).getTime() : NaN;
+  return isNaN(t) ? null : t;
+}
+function intervalForDays(d){ return d>21 ? 7 : d>=8 ? 4 : d>=2 ? 2 : 0; }   // jours entre deux simulations complètes
+function simsPlanned(daysLeft){ let n = 0; for(let d=daysLeft; d>=2; d--) n += 1/intervalForDays(d); return Math.round(n); }
+const PHASE_LABELS = {
+  p1:'Phase 1 · Couvrir et comprendre', p2:'Phase 2 · Consolider', p3:'Phase 3 · Simulations',
+  eve:"Veille de l'examen", dayJ:'Jour J', past:'Date dépassée'
+};
+function computePlan(now){
+  const exam = parseExamTs();
+  if(exam==null) return {valid:false};
+  const msLeft = exam - now;
+  const daysLeft = diffDays(exam, now);
+  const dayMap = getDayMap();
+  const plan = {valid:true, exam, now, msLeft, daysLeft, dayMap};
+  plan.todayQ = (dayMap[dayKey(now)]||{}).q || 0;
+  plan.streak = computeStreak(dayMap, now);
+  plan.restDays = Math.max(0, Math.floor(msLeft/DAY_MS));
+  plan.restHours = Math.max(0, Math.floor((msLeft % DAY_MS)/3600000));
+  if(msLeft <= 0){ plan.phase = 'past'; return plan; }
+  plan.phase = daysLeft===0 ? 'dayJ' : daysLeft===1 ? 'eve' : daysLeft<=7 ? 'p3' : daysLeft<=21 ? 'p2' : 'p1';
+
+  let unseen = 0, failing = 0, mastered = 0;
+  QUESTIONS.forEach(q=>{
+    const s = store.stats[q.id];
+    if(!s || !s.attempts) unseen++;
+    else if(s.lastCorrect===false) failing++;
+    else mastered++;
+  });
+  Object.assign(plan, {unseen, failing, mastered});
+
+  // objectif quotidien : voir les jamais-vues une fois, retravailler les ratées deux fois, réparti sur les jours d'étude
+  const studyDays = Math.max(1, daysLeft - 2);
+  let goal = Math.ceil((unseen + 2*failing) / studyDays);
+  goal = Math.min(60, Math.max(15, goal));
+  goal = Math.ceil(goal/5)*5;
+  if(plan.phase==='eve' || plan.phase==='dayJ') goal = 15;
+  plan.goal = goal;
+
+  // calendrier du plan
+  const planStartTs = keyToTs(store.settings.planStart);
+  plan.totalDays = Math.max(1, diffDays(exam, planStartTs));
+  plan.elapsedDays = Math.min(plan.totalDays, Math.max(0, diffDays(now, planStartTs)));
+
+  // en avance / en retard : moyenne des jours précédents (hors aujourd'hui) vs objectif
+  const win = Math.min(7, Math.max(0, diffDays(now, planStartTs)));
+  if(plan.phase === 'eve'){
+    plan.status = {kind:'ontrack', text:"Veille d'examen : le travail est fait. On ne cherche plus à apprendre, seulement à rester calme et lucide."};
+  } else if(plan.phase === 'dayJ'){
+    plan.status = {kind:'ontrack', text:"Jour J : tu as fait le travail. Une minute par question, marque et passe si ça bloque, puis reviens."};
+  } else if(win === 0){
+    plan.status = {kind:'start', text:"Jour 1 du plan : lance ta première session pour démarrer ta série."};
+  } else {
+    let sum = 0;
+    for(let i=1; i<=win; i++) sum += (dayMap[dayKey(addDays(now, -i))]||{}).q || 0;
+    const avg = sum / win;
+    const ratio = avg / goal;
+    const avgTxt = Math.round(avg);
+    const catchup = Math.min(60, Math.ceil(goal*1.5/5)*5);
+    if(ratio >= 1.15) plan.status = {kind:'ahead', text:`En avance sur ton plan : ${avgTxt} questions/jour sur les ${win} derniers jours (objectif ${goal}).`};
+    else if(ratio >= 0.85) plan.status = {kind:'ontrack', text:`Dans les temps : ${avgTxt} questions/jour sur les ${win} derniers jours (objectif ${goal}).`};
+    else if(ratio >= 0.5) plan.status = {kind:'late', text:`Légèrement en retard : ${avgTxt} questions/jour pour un objectif de ${goal}. Vise ${catchup} aujourd'hui pour revenir dans le rythme.`};
+    else plan.status = {kind:'behind', text:`En retard sur ton plan (${avgTxt}/jour pour ${goal} visées). Pas de panique : une session de ${catchup} questions aujourd'hui te remet sur les rails.`};
+  }
+
+  // simulations complètes en conditions réelles
+  const sims = getRealSims();
+  plan.simCount = sims.length;
+  plan.lastSim = sims.length ? sims[sims.length-1] : null;
+  plan.simsPlanned = simsPlanned(daysLeft);
+  const interval = intervalForDays(daysLeft);
+  if(interval === 0) plan.nextSimDays = null;
+  else if(!plan.lastSim) plan.nextSimDays = 0;
+  else plan.nextSimDays = Math.max(0, diffDays(addDays(startOfDay(plan.lastSim.date), interval), now));
+
+  // à faire aujourd'hui
+  const hm = fmtHM(exam);
+  const tasks = [];
+  if(plan.phase==='p1'){
+    tasks.push(`<b>${goal} questions</b> aujourd'hui : le tirage priorise les jamais vues et les ratées.`);
+    tasks.push(`Une <b>simulation complète</b> (50 questions, 50 minutes, mode Examen réel) environ <b>une fois par semaine</b>.`);
+    tasks.push(`Relire la fiche Coach du domaine où tu es le plus faible.`);
+  } else if(plan.phase==='p2'){
+    tasks.push(`<b>${goal} questions</b> aujourd'hui, en insistant sur les <b>questions têtues</b>.`);
+    tasks.push(`Une <b>simulation complète</b> tous les <b>3 à 4 jours</b>, puis <b>revoir chaque erreur</b> (Historique → Revoir).`);
+    tasks.push(`Relire pièges d'examen et commandes CLI dans le Coach.`);
+  } else if(plan.phase==='p3'){
+    tasks.push(`Une <b>simulation complète un jour sur deux</b> en mode Examen réel, <b>sans interruption</b>.`);
+    tasks.push(`Fais-en au moins une <b>à ${hm}</b>, l'heure de ton examen, pour caler ta concentration.`);
+    tasks.push(`Revoir toutes les erreurs de chaque simulation, puis ${goal} questions ciblées (têtues et marquées).`);
+  } else if(plan.phase==='eve'){
+    tasks.push(`<b>Pas de nouvelle simulation</b> : on ne cherche plus à apprendre, on se met en confiance.`);
+    tasks.push(`Relire tes questions marquées et têtues (30 minutes maximum).`);
+    tasks.push(`Vérifie l'horaire (${hm}), ta pièce d'identité et les conditions de passage, puis couche-toi tôt.`);
+  } else if(plan.phase==='dayJ'){
+    tasks.push(`C'est le grand jour, à ${hm}. Un coup d'œil aux pièges d'exhibits dans le Coach, pas plus.`);
+    tasks.push(`Gère ton temps : une minute par question, marque et passe si ça bloque, reviens ensuite.`);
+  }
+  plan.tasks = tasks;
+  return plan;
+}
+
+/* ---------- rythme (temps de réflexion) ---------- */
+function computePace(){
+  let totMs = 0, totN = 0;
+  const perDomain = {};
+  DOMAINS.forEach(d=>{ perDomain[d.id] = {ms:0, n:0}; });
+  const perQ = [];
+  QUESTIONS.forEach(q=>{
+    const s = store.stats[q.id];
+    if(!s || !s.ansN) return;
+    totMs += s.ansTimeMs; totN += s.ansN;
+    const d = themeToDomain(q.theme);
+    if(d){ perDomain[d.id].ms += s.ansTimeMs; perDomain[d.id].n += s.ansN; }
+    perQ.push({q, avg: s.ansTimeMs / s.ansN / 1000, n: s.ansN});
+  });
+  perQ.sort((a,b)=>b.avg-a.avg);
+  return {avg: totN ? totMs/totN/1000 : null, totN, perDomain, slowest: perQ.slice(0,6)};
+}
+
+/* ---------- questions têtues ---------- */
+function computeStubborn(){
+  const rows = [];
+  QUESTIONS.forEach(q=>{
+    const s = store.stats[q.id];
+    if(!s || !s.attempts) return;
+    const fails = s.attempts - s.correct;
+    if(fails <= 0) return;
+    if(!(fails >= 2 || s.lastCorrect === false)) return;
+    rows.push({q, fails, attempts:s.attempts, last:s.lastCorrect,
+               score: fails*2 + (s.lastCorrect===false ? 1 : 0) + fails/s.attempts});
+  });
+  rows.sort((a,b)=>b.score-a.score);
+  return rows;
+}
+
+/* ---------- rendus SVG / HTML ---------- */
+function renderRadarSvg(dom){
+  const cx = 220, cy = 160, R = 100;
+  const ang = i => (-90 + i*72) * Math.PI/180;
+  const pt = (i, pct) => [cx + R*(pct/100)*Math.cos(ang(i)), cy + R*(pct/100)*Math.sin(ang(i))];
+  const fmt = p => p.map(n=>n.toFixed(1)).join(',');
+  let svg = '<svg viewBox="0 0 440 320" class="st-radar" role="img" aria-label="Radar de maîtrise par domaine">';
+  [25,50,75,100].forEach(l=>{ svg += `<polygon class="rd-grid" points="${DOMAINS.map((d,i)=>fmt(pt(i,l))).join(' ')}"/>`; });
+  DOMAINS.forEach((d,i)=>{ const [x,y] = pt(i,100); svg += `<line class="rd-axis" x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}"/>`; });
+  svg += `<polygon class="rd-target" points="${DOMAINS.map((d,i)=>fmt(pt(i,80))).join(' ')}"/>`;
+  svg += `<polygon class="rd-area" points="${DOMAINS.map((d,i)=>fmt(pt(i, dom[d.id].pct))).join(' ')}"/>`;
+  DOMAINS.forEach((d,i)=>{
+    const p = dom[d.id].pct;
+    const [x,y] = pt(i,p);
+    svg += `<circle class="rd-dot" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4"><title>${escHtml(d.name)} : ${p} % maîtrisé</title></circle>`;
+    const c = Math.cos(ang(i)), s = Math.sin(ang(i));
+    const lx = cx + (R+22)*c, ly = cy + (R+22)*s;
+    const anchor = c > 0.3 ? 'start' : c < -0.3 ? 'end' : 'middle';
+    const dy = s < -0.8 ? -8 : s > 0.5 ? 14 : 4;
+    svg += `<text class="rd-label" x="${lx.toFixed(1)}" y="${(ly+dy).toFixed(1)}" text-anchor="${anchor}">${escHtml(RADAR_LABELS[d.id])}</text>`;
+    svg += `<text class="rd-pct" x="${lx.toFixed(1)}" y="${(ly+dy+13).toFixed(1)}" text-anchor="${anchor}" style="fill:${domainColor(p)}">${p} %</text>`;
+  });
+  return svg + '</svg>';
+}
+
+function renderProgressChart(){
+  const hist = store.history.slice(-24);
+  if(hist.length < 2) return '<div class="hist-empty">Termine au moins 2 sessions pour voir ta courbe de progression.</div>';
+  const W = 640, H = 250, L = 40, Rt = 14, T = 14, B = 34, iw = W-L-Rt, ih = H-T-B;
+  const x = i => L + iw*i/(hist.length-1);
+  const y = p => T + ih*(1-p/100);
+  let svg = `<svg viewBox="0 0 ${W} ${H}" class="st-chart" role="img" aria-label="Évolution des scores">`;
+  [0,25,50,75,100].forEach(g=>{
+    svg += `<line class="pg-grid" x1="${L}" y1="${y(g)}" x2="${W-Rt}" y2="${y(g)}"/><text class="pg-axis" x="${L-8}" y="${y(g)+4}" text-anchor="end">${g}</text>`;
+  });
+  svg += `<line class="pg-target" x1="${L}" y1="${y(80)}" x2="${W-Rt}" y2="${y(80)}"/><text class="pg-axis" x="${L+6}" y="${y(80)-6}" text-anchor="start" style="fill:var(--good)">objectif 80 %</text>`;
+  const step = Math.ceil(hist.length/8);
+  hist.forEach((h,i)=>{ if(i%step===0 || i===hist.length-1) svg += `<text class="pg-axis" x="${x(i)}" y="${H-10}" text-anchor="${i===hist.length-1 ? 'end' : 'middle'}">${fmtShortDate(h.date)}</text>`; });
+  ['study','real'].forEach(kind=>{
+    const pts = hist.map((h,i)=>({h,i})).filter(o=> (o.h.mode==='real') === (kind==='real'));
+    if(pts.length > 1) svg += `<path class="pg-line pg-${kind}" d="${pts.map((o,k)=>(k?'L':'M')+x(o.i).toFixed(1)+' '+y(o.h.pct).toFixed(1)).join(' ')}"/>`;
+    pts.forEach(o=>{
+      svg += `<circle class="pg-dot pg-${kind}-dot" cx="${x(o.i).toFixed(1)}" cy="${y(o.h.pct).toFixed(1)}" r="5"><title>${fmtShortDate(o.h.date)} · ${escHtml(o.h.label)} · ${o.h.pct} %</title></circle>`;
+    });
+  });
+  return svg + '</svg>';
+}
+
+function renderCalendarHtml(plan, now){
+  const dayMap = plan.dayMap || getDayMap();
+  const todayTs = startOfDay(now);
+  let startTs = startOfDay(addDays(now, -27));
+  startTs = addDays(startTs, -((new Date(startTs).getDay()+6)%7));          // lundi
+  let endTs = plan.valid ? startOfDay(plan.exam) : addDays(todayTs, 27);
+  if(endTs < todayTs) endTs = todayTs;
+  const maxEnd = addDays(startTs, 7*20 - 1);
+  if(endTs > maxEnd) endTs = maxEnd;
+  endTs = addDays(endTs, 6 - ((new Date(endTs).getDay()+6)%7));              // dimanche
+  const cells = [], months = [];
+  let prevMonth = -1, w = 0;
+  for(let ts = startTs; ts <= endTs; ts = addDays(ts,1)){
+    const col = Math.floor(cells.length/7);
+    const d = new Date(ts);
+    if(cells.length % 7 === 0){
+      const m = d.getMonth();
+      months.push(m !== prevMonth ? d.toLocaleDateString('fr-FR',{month:'short'}) : '');
+      prevMonth = m;
+    }
+    const q = (dayMap[dayKey(ts)]||{}).q || 0;
+    const lv = q===0 ? 0 : q<10 ? 1 : q<25 ? 2 : q<50 ? 3 : 4;
+    const isToday = ts === todayTs, isFuture = ts > todayTs;
+    const isExam = plan.valid && ts === startOfDay(plan.exam);
+    const cls = `st-cell lv${lv}${isToday?' today':''}${isFuture?' future':''}${isExam?' exam':''}`;
+    const tip = isExam ? `Jour J · ${fmtShortDate(ts)}` : `${fmtShortDate(ts)} · ${q} question${q>1?'s':''}`;
+    cells.push(`<div class="${cls}" title="${tip}">${isExam?'🎯':''}</div>`);
+  }
+  const weeks = Math.ceil(cells.length/7);
+  return `<div class="st-cal-wrap" style="max-width:${weeks*34}px">
+    <div class="st-cal-months" style="grid-template-columns:repeat(${weeks},1fr)">${months.map(m=>`<span>${m}</span>`).join('')}</div>
+    <div class="st-cal" style="grid-template-columns:repeat(${weeks},1fr)">${cells.join('')}</div>
+    <div class="st-cal-legend"><span>moins</span><i class="st-cell lv0"></i><i class="st-cell lv1"></i><i class="st-cell lv2"></i><i class="st-cell lv3"></i><i class="st-cell lv4"></i><span>plus</span></div>
+  </div>`;
+}
+
+/* ---------- construction de l'écran ---------- */
+function renderPlanCard(plan, now){
+  if(!plan.valid){
+    return `<div class="st-card"><div class="st-eyebrow">📅 Plan jusqu'au jour J</div><p class="st-muted">Aucune date d'examen définie.</p>${renderDateForm(null)}</div>`;
+  }
+  const examLine = `${fmtLongDate(plan.exam)} · ${fmtHM(plan.exam)}`;
+  const head = `<div class="st-card-head"><div class="st-eyebrow">📅 Plan jusqu'au jour J</div>
+      <button class="st-link" id="stEditDateBtn">${stEditingDate ? 'Annuler' : 'Modifier la date'}</button></div>`;
+  const form = stEditingDate ? renderDateForm(plan.exam) : '';
+
+  if(plan.phase === 'past'){
+    return `<div class="st-card">${head}${form}
+      <div class="st-plan-status st-status-late">La date d'examen (${examLine}) est passée. Si tu repasses l'examen, mets à jour la date pour relancer ton plan.</div></div>`;
+  }
+  const cdNum = plan.daysLeft === 0 ? 'Jour J' : `J-${plan.daysLeft}`;
+  const cdSub = plan.daysLeft === 0
+    ? `Aujourd'hui à ${fmtHM(plan.exam)} · encore ${plan.restHours} h`
+    : `${plan.restDays} jour${plan.restDays>1?'s':''} et ${plan.restHours} h avant l'examen`;
+  const pctDone = Math.min(100, Math.round(100*plan.elapsedDays/plan.totalDays));
+  const goalPct = Math.min(100, Math.round(100*plan.todayQ/plan.goal));
+  const nextSim = plan.nextSimDays===null ? '—' : plan.nextSimDays===0 ? "aujourd'hui" : plan.nextSimDays===1 ? 'demain' : `dans ${plan.nextSimDays} jours`;
+  const showSimBtn = plan.phase!=='eve' && plan.phase!=='dayJ';
+  const lastSimTxt = plan.lastSim ? ` · dernière : ${plan.lastSim.pct} % le ${fmtShortDate(plan.lastSim.date)}` : '';
+
+  return `<div class="st-card">${head}${form}
+    <div class="st-plan-top">
+      <div class="st-countdown"><div class="st-cd-num">${cdNum}</div>
+        <div class="st-cd-sub"><b>${examLine}</b><br>${cdSub}</div></div>
+      <div class="st-plan-status st-status-${plan.status.kind}">${plan.status.text}</div>
+    </div>
+    <div class="st-timeline"><div class="st-timeline-lbl"><span>Jour ${plan.elapsedDays+1} sur ${plan.totalDays}</span><span>${PHASE_LABELS[plan.phase]}</span></div>
+      <div class="dm-bar-wrap"><div class="dm-bar" style="width:${pctDone}%; background:var(--accent)"></div></div></div>
+
+    <div class="st-today">
+      <div class="st-today-head"><b>Aujourd'hui</b><span class="mono">${plan.todayQ} / ${plan.goal} questions</span></div>
+      <div class="dm-bar-wrap"><div class="dm-bar" style="width:${goalPct}%; background:${goalPct>=100?'var(--good)':'var(--accent)'}"></div></div>
+      <ul class="st-tasks">${plan.tasks.map(t=>`<li>${t}</li>`).join('')}</ul>
+      <div class="st-actions">
+        <button class="btn btn-primary btn-sm" id="stDailyBtn">▶ Session du jour (${plan.goal} questions)</button>
+        ${showSimBtn ? '<button class="btn btn-ghost btn-sm" id="stSimBtn">⏱ Simulation complète (50 q · 50 min)</button>' : ''}
+      </div>
+    </div>
+
+    <div class="st-chips">
+      <div class="st-chip"><span class="st-chip-n">${plan.simCount}</span><span class="st-chip-l">simulations réelles faites${lastSimTxt}</span></div>
+      <div class="st-chip"><span class="st-chip-n">≈ ${plan.simsPlanned}</span><span class="st-chip-l">recommandées d'ici le jour J</span></div>
+      <div class="st-chip"><span class="st-chip-n">${nextSim}</span><span class="st-chip-l">prochaine simulation conseillée</span></div>
+    </div>
+
+    <div class="st-streak">🔥 Série en cours : <b>${plan.streak.current} jour${plan.streak.current>1?'s':''}</b> · record : ${plan.streak.best}</div>
+    ${renderCalendarHtml(plan, now)}
+  </div>`;
+}
+function renderDateForm(examTs){
+  const val = examTs ? toInputValue(examTs) : '2026-12-08T15:00';
+  return `<div class="st-dateform"><label for="stExamInput">Date et heure de l'examen</label>
+    <input type="datetime-local" id="stExamInput" value="${val}">
+    <button class="btn btn-primary btn-sm" id="stSaveDateBtn">Enregistrer</button></div>`;
+}
+
+function renderReadinessCard(r){
+  const C = 2*Math.PI*60;
+  const col = readinessColor(r.index);
+  const simLine = r.simAvg===null
+    ? `<li><b>Simulations réelles :</b> aucune pour l'instant. Tant que tu n'en as pas passé, l'indice reste <b>plafonné à 70</b>.</li>`
+    : `<li><b>Simulations réelles</b> (${Math.min(3,r.simCount)} dernière${r.simCount>1?'s':''}) : <b>${r.simAvg} %</b> · 30 % de l'indice</li>`;
+  const lever = r.lever
+    ? `<div class="st-lever">🎯 Plus gros levier : <b>${escHtml(r.lever.short)}</b> (${r.lever.weight} de l'examen, ${r.domains[r.lever.id].pct} % maîtrisé).</div>` : '';
+  return `<div class="st-card">
+    <div class="st-eyebrow">🧭 Indice de préparation</div>
+    <div class="st-ring-row">
+      <div class="score-ring-wrap" style="width:150px;height:150px;margin:0;">
+        <svg viewBox="0 0 140 140" width="150" height="150"><circle class="score-ring-bg" cx="70" cy="70" r="60"></circle>
+          <circle class="score-ring-fg" cx="70" cy="70" r="60" stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${(C*(1-r.index/100)).toFixed(1)}" style="stroke:${col}"></circle></svg>
+        <div class="score-ring-text"><div class="pct" style="font-size:32px">${r.index}</div><div class="lbl">sur 100</div></div>
+      </div>
+      <div><div class="st-level" style="color:${col}">${readinessLabel(r.index)}</div>
+        <ul class="st-formula"><li><b>Maîtrise pondérée :</b> <b>${r.masteryPct} %</b> · 70 % de l'indice</li>${simLine}</ul></div>
+    </div>
+    ${lever}
+    <p class="st-disclaimer">Indicateur d'entraînement basé sur tes résultats, pas une prédiction de réussite : le seuil officiel n'est pas publié.</p>
+  </div>`;
+}
+function renderRadarCard(r){
+  return `<div class="st-card"><div class="st-eyebrow">🕸️ Mes 5 domaines</div>${renderRadarSvg(r.domains)}
+    <div class="st-legend"><span><i class="lg-you"></i> ton niveau</span><span><i class="lg-target"></i> cible 80 %</span></div>
+    <p class="st-muted" style="margin:8px 0 0">Un domaine = part des questions dont ta <i>dernière</i> réponse est juste.</p></div>`;
+}
+function renderProgressCard(){
+  return `<div class="st-card"><div class="st-eyebrow">📈 Progression des scores</div>${renderProgressChart()}
+    <div class="st-legend"><span><i class="lg-study"></i> Étude</span><span><i class="lg-real"></i> Examen réel</span></div></div>`;
+}
+function paceColor(sec){ return sec <= 45 ? 'var(--good)' : sec <= EXAM_BUDGET_SEC ? 'var(--warn)' : 'var(--bad)'; }
+function renderPaceCard(p){
+  if(p.avg === null){
+    return `<div class="st-card"><div class="st-eyebrow">⏱️ Mon rythme</div><div class="hist-empty">Pas encore de mesure. Réponds à quelques questions : ton temps de réflexion par question et par domaine apparaîtra ici.</div></div>`;
+  }
+  const max = Math.max(90, ...DOMAINS.map(d=>{ const o = p.perDomain[d.id]; return o.n ? o.ms/o.n/1000 : 0; }));
+  const rows = DOMAINS.map(d=>{
+    const o = p.perDomain[d.id];
+    if(!o.n) return `<div class="dm-row"><div class="dm-info"><div class="dm-name">${escHtml(d.short)}</div></div><div class="dm-bar-wrap"></div><div class="dm-pct" style="color:var(--text-faint)">—</div></div>`;
+    const sec = o.ms/o.n/1000;
+    return `<div class="dm-row"><div class="dm-info"><div class="dm-name">${escHtml(d.short)}</div></div>
+      <div class="dm-bar-wrap st-pace-bar"><div class="dm-bar" style="width:${Math.min(100,100*sec/max)}%; background:${paceColor(sec)}"></div><i class="st-budget" style="left:${100*EXAM_BUDGET_SEC/max}%"></i></div>
+      <div class="dm-pct" style="color:${paceColor(sec)}">${Math.round(sec)} s</div></div>`;
+  }).join('');
+  const slow = p.slowest.map(o=>`<div class="st-q-row"><span class="q-chip">Q${o.q.id}</span>
+      <span class="st-q-txt">${escHtml(o.q.question.split('\n')[0].slice(0,78))}…</span>
+      <b style="color:${paceColor(o.avg)}">${Math.round(o.avg)} s</b></div>`).join('');
+  return `<div class="st-card"><div class="st-eyebrow">⏱️ Mon rythme</div>
+    <div class="st-pace-top"><span class="st-pace-n" style="color:${paceColor(p.avg)}">${Math.round(p.avg)} s</span>
+      <span class="st-muted">de réflexion en moyenne par question · budget examen : <b>${EXAM_BUDGET_SEC} s</b> (50 min / 50 questions)</span></div>
+    <div class="domain-mastery">${rows}</div>
+    <div class="st-sub">Les questions où tu mets le plus de temps</div>${slow}
+    <p class="st-disclaimer">Le temps est mesuré jusqu'à ta validation (étude) ou sur la question (examen réel), explication exclue.</p></div>`;
+}
+function renderStubbornCard(rows){
+  if(rows.length === 0){
+    return `<div class="st-card"><div class="st-eyebrow">🪨 Questions têtues</div><div class="hist-empty">Rien à signaler pour l'instant : aucune question ratée à plusieurs reprises ou à ta dernière tentative.</div></div>`;
+  }
+  const shown = rows.slice(0, 10);
+  const list = shown.map(o=>{
+    const d = themeToDomain(o.q.theme);
+    return `<div class="st-q-row"><span class="q-chip ${o.fails>=2?'q-wrong':''}">Q${o.q.id}</span>
+      <span class="st-q-txt">${escHtml(THEME_SHORT[o.q.theme]||'')} · ${escHtml(o.q.question.split('\n')[0].slice(0,70))}…</span>
+      <span class="st-q-meta">${o.fails} échec${o.fails>1?'s':''} / ${o.attempts}</span>
+      <button class="st-link st-replay" data-qid="${o.q.id}">Rejouer</button>
+      <button class="st-link st-coach" data-domain="${d?d.id:'d1'}">Fiche Coach</button></div>`;
+  }).join('');
+  return `<div class="st-card"><div class="st-card-head"><div class="st-eyebrow">🪨 Questions têtues <span class="st-count">${rows.length}</span></div>
+    <button class="btn btn-primary btn-sm" id="stReplayAllBtn">Rejouer ces ${Math.min(rows.length, 20)} questions</button></div>
+    <p class="st-muted" style="margin:0 0 10px">Ratées plusieurs fois, ou ratées à ta dernière tentative.</p>${list}</div>`;
+}
+
+function renderStats(){
+  const now = Date.now();
+  const plan = computePlan(now);
+  const readiness = computeReadiness();
+  const pace = computePace();
+  const stubborn = computeStubborn();
+  byId('statsRoot').innerHTML =
+    renderPlanCard(plan, now) +
+    `<div class="st-grid-2">${renderReadinessCard(readiness)}${renderRadarCard(readiness)}</div>` +
+    renderProgressCard() +
+    renderPaceCard(pace) +
+    renderStubbornCard(stubborn);
+
+  const root = byId('statsRoot');
+  const on = (id, fn)=>{ const el = byId(id); if(el) el.addEventListener('click', fn); };
+  on('stEditDateBtn', ()=>{ stEditingDate = !stEditingDate; renderStats(); });
+  on('stSaveDateBtn', ()=>{
+    const v = byId('stExamInput').value;
+    const t = v ? new Date(v).getTime() : NaN;
+    if(isNaN(t)){ showToast("Date invalide : choisis un jour et une heure."); return; }
+    store.settings.examDate = v;
+    saveStore();
+    stEditingDate = false;
+    renderStats();
+    showToast("Date d'examen enregistrée.");
+  });
+  on('stDailyBtn', ()=>{
+    const goal = plan.valid && plan.goal ? plan.goal : 15;
+    startQuiz(weightedSample(QUESTIONS, Math.min(goal, QUESTIONS.length)), 'Session du jour', 'study', null, 'stats');
+  });
+  on('stSimBtn', ()=>{
+    const n = Math.min(50, QUESTIONS.length);
+    startQuiz(shuffle(QUESTIONS).slice(0, n), "Simulation d'examen complète", 'real', n*60000, 'stats');
+  });
+  on('stReplayAllBtn', ()=>{
+    startQuiz(stubborn.slice(0,20).map(o=>o.q), 'Questions têtues', 'study', null, 'stats');
+  });
+  root.querySelectorAll('.st-replay').forEach(b=> b.addEventListener('click', ()=>{
+    const q = QUESTIONS.find(x=>x.id===parseInt(b.dataset.qid));
+    if(q) startQuiz([q], `Question têtue — Q${q.id}`, 'study', null, 'stats');
+  }));
+  root.querySelectorAll('.st-coach').forEach(b=> b.addEventListener('click', ()=>{
+    coachSelectedDomain = b.dataset.domain; openCoach();
+  }));
+}
+function openStats(){
+  showView('stats');
+  renderStats();
+}
+byId('statsBackBtn').addEventListener('click', ()=>{ showView('home'); renderHome(); });
+
+/* ============================================================
+   APPARENCE — thème et couleur d'accent
+   ============================================================ */
+const ACCENT_SWATCHES = [
+  {hex:'#2563EB', name:'Bleu'}, {hex:'#FF5A2B', name:'Orange'}, {hex:'#16A34A', name:'Vert'},
+  {hex:'#7C3AED', name:'Violet'}, {hex:'#0D9488', name:'Turquoise'}, {hex:'#E11D48', name:'Rose'}
+];
+function currentTheme(){ return store.settings.theme==='dark' ? 'dark' : 'light'; }
+function renderAppearance(){
+  const theme = currentTheme();
+  document.querySelectorAll('#themeCards .theme-card').forEach(c=>c.classList.toggle('active', c.dataset.theme===theme));
+  const effective = String(store.settings.accent || THEME_DEFAULT_ACCENT[theme]).toLowerCase();
+  const row = byId('swatchRow');
+  row.innerHTML = ACCENT_SWATCHES.map(s=>
+    `<button class="swatch ${s.hex.toLowerCase()===effective?'active':''}" data-hex="${s.hex}" title="${s.name}" aria-label="${s.name}" style="background:${s.hex}"></button>`).join('');
+  row.querySelectorAll('.swatch').forEach(b=> b.addEventListener('click', ()=> setAppearance({accent:b.dataset.hex})));
+  byId('accentResetBtn').style.display = store.settings.accent ? '' : 'none';
+}
+function setAppearance(patch){
+  if('theme' in patch) store.settings.theme = patch.theme;
+  if('accent' in patch){ if(patch.accent) store.settings.accent = patch.accent; else delete store.settings.accent; }
+  saveStore();
+  applyAppearance(store.settings);
+  renderAppearance();
+}
+byId('themeBtn').addEventListener('click', ()=>{ renderAppearance(); byId('themeModal').classList.add('active'); });
+byId('themeCloseBtn').addEventListener('click', ()=>byId('themeModal').classList.remove('active'));
+byId('themeModal').addEventListener('click', (e)=>{ if(e.target.id==='themeModal') byId('themeModal').classList.remove('active'); });
+document.querySelectorAll('#themeCards .theme-card').forEach(c=> c.addEventListener('click', ()=> setAppearance({theme:c.dataset.theme})));
+byId('accentResetBtn').addEventListener('click', ()=> setAppearance({accent:null}));
+applyAppearance(store.settings);
+
+/* ============================================================
+   INIT
+   ============================================================ */
+function renderHome(){
+  byId('heroQCount').textContent = QUESTIONS.length;
+  byId('scopeAllChip').textContent = `Toute la banque (${QUESTIONS.length})`;
+  byId('quickSimDesc').textContent = `${Math.min(50,QUESTIONS.length)} questions aléatoires · ${Math.min(50,QUESTIONS.length)} minutes chronométrées · conditions Pearson VUE (aucune correction avant la fin)`;
+  renderStatRow();
+  renderHistoryList(byId('homeHistoryList'), 3);
+  byId('historyAllBtn').style.display = store.history.length>0 ? '' : 'none';
+  renderDomainRows(byId('homeDomainRows'), computeGlobalDomainMastery());
+  renderPoolCounts();
+  renderExamGrid();
+  renderThemeGrid();
+  updateStartBar();
+}
+renderHome();
+</script>
+</body>
+</html>
